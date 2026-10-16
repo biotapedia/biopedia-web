@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#102d2a">
+    <meta name="description" content="沿着分类树探索生命，与社区一起完善开放生物图鉴。">
+    <title>万物图鉴 · BIOTA</title>
+    <link rel="stylesheet" href="./styles.css">
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#/" aria-label="返回万物图鉴首页">
+        <span class="brand-mark" aria-hidden="true">✳</span>
+        <span>BIOTA <small>万物图鉴</small></span>
+      </a>
+      <nav aria-label="主导航">
+        <a href="#/">探索分类</a>
+        <button class="header-contribute" type="button" data-open-contribute>贡献一个条目 <span aria-hidden="true">↗</span></button>
+      </nav>
+    </header>
+
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-dot"></span> 一个由社区共同书写的生命目录</p>
+        <h1 id="hero-title">沿着生命的脉络，<br><em>发现万物。</em></h1>
+        <p class="hero-description">从界到种，逐层探索；每一个条目，都可以由好奇的你补全。</p>
+        <div class="hero-actions">
+          <a class="primary-link" href="#catalog">开始探索 <span aria-hidden="true">↘</span></a>
+          <span class="hero-note">开放资料 · 逐级浏览 · 社区共建</span>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="orbit orbit-one"></div>
+        <div class="orbit orbit-two"></div>
+        <div class="orbit orbit-three"></div>
+        <div class="leaf leaf-one"></div>
+        <div class="leaf leaf-two"></div>
+        <div class="leaf leaf-three"></div>
+        <div class="art-center">B<span>·</span></div>
+        <span class="art-label art-label-top">NATURE / INDEX</span>
+        <span class="art-label art-label-bottom">01 — ∞</span>
+      </div>
+    </section>
+
+    <main id="catalog" class="catalog-layout">
+      <aside class="sidebar" aria-label="分类路径">
+        <div class="sidebar-heading">
+          <span class="section-kicker">FIELD NOTES / 目录</span>
+          <h2>探索路径</h2>
+        </div>
+        <nav id="path-nav" class="path-nav" aria-label="当前分类路径"></nav>
+        <div class="sidebar-tip">
+          <span class="tip-symbol" aria-hidden="true">↗</span>
+          <p>发现资料缺失？<br>从当前分类直接发起投稿。</p>
+          <button type="button" data-open-contribute>参与共建 <span aria-hidden="true">→</span></button>
+        </div>
+      </aside>
+
+      <section class="catalog-content" aria-live="polite">
+        <div class="content-topline">
+          <span class="section-kicker">LIVING CATALOG / 生物分类</span>
+          <span id="content-status" class="content-status">正在连接图鉴…</span>
+        </div>
+        <div id="detail" class="detail"></div>
+        <div class="directory-heading">
+          <div>
+            <p id="directory-kicker" class="section-kicker">EXPLORE / 下一层级</p>
+            <h2 id="directory-title">选择一个分类</h2>
+          </div>
+          <label class="filter-field">
+            <span class="sr-only">筛选当前目录</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3"></circle><path d="m16 16 4.3 4.3"></path></svg>
+            <input id="directory-filter" type="search" placeholder="筛选当前目录…" autocomplete="off">
+          </label>
+        </div>
+        <div id="children" class="card-grid"></div>
+        <button id="load-more" class="load-more" type="button" hidden>加载更多分类 <span aria-hidden="true">↓</span></button>
+        <p id="empty-state" class="empty-state" hidden></p>
+      </section>
+    </main>
+
+    <footer class="footer"><span>BIOTA / 万物图鉴</span><span>内容由社区共同维护 · 文字存于 GitHub 仓库</span></footer>
+
+    <dialog id="contribute-dialog" class="contribute-dialog">
+      <form id="contribute-form" method="dialog">
+        <div class="dialog-head">
+          <div><span class="section-kicker">CONTRIBUTE / 社区投稿</span><h2>添加一个分类</h2></div>
+          <button id="close-dialog" class="close-button" type="button" aria-label="关闭投稿表单">×</button>
+        </div>
+        <p class="dialog-intro">填写资料后，我们会为你准备 GitHub 投稿页面；管理员将通过 Pull Request 审核内容。</p>
+        <div class="form-grid">
+          <label class="form-field"><span>上级分类</span><input id="form-parent-label" type="text" readonly><small>由当前浏览位置自动确定</small></label>
+          <label class="form-field"><span>分类级别 *</span><select name="rank" required>
+            <option value="kingdom">界</option><option value="phylum">门</option><option value="class">纲</option>
+            <option value="order">目</option><option value="suborder">亚目</option><option value="family">科</option>
+            <option value="subfamily">亚科</option><option value="tribe">族</option><option value="genus">属</option>
+            <option value="species">种</option><option value="subspecies">亚种</option><option value="clade">演化支</option>
+            <option value="unranked">未定级</option>
+          </select></label>
+          <label class="form-field"><span>中文名 *</span><input name="name_zh" maxlength="120" required placeholder="例如：狮"></label>
+          <label class="form-field"><span>学名 *</span><input name="scientific_name" maxlength="160" required placeholder="例如：Panthera leo"></label>
+          <label class="form-field form-wide"><span>介绍与特征 *</span><textarea name="description" minlength="20" maxlength="10000" required rows="5" placeholder="请描述形态、栖息地、分布等，并尽量提供可核对的资料来源。"></textarea></label>
+          <label class="form-field form-wide"><span>图片外链（HTTPS）</span><input name="image_url" type="url" placeholder="https://example.org/photo.jpg"></label>
+          <label class="form-field"><span>图片作者及授权</span><input name="image_credit" maxlength="1000" placeholder="有图片时必填"></label>
+          <label class="form-field"><span>资料来源（HTTPS）</span><input name="source_url" type="url" placeholder="https://example.org/source"></label>
+        </div>
+        <div id="draft-panel" class="draft-panel" hidden><p id="draft-message"></p><textarea id="draft-body" readonly rows="6" aria-label="投稿草稿"></textarea><a id="draft-link" href="#" target="_blank" rel="noopener noreferrer" hidden>打开 GitHub 投稿页面 ↗</a></div>
+        <div class="dialog-actions"><button class="secondary-button" id="copy-draft" type="button">复制草稿</button><button class="primary-button" type="submit">准备投稿 <span aria-hidden="true">↗</span></button></div>
+      </form>
+    </dialog>
+  </body>
+</html>
