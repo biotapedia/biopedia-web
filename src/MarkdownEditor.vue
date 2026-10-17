@@ -20,7 +20,7 @@ let lastMarkdown = model.value;
 const editor = useEditor({
   content: model.value,
   contentType: 'markdown',
-  extensions: richMarkdownExtensions('描述形态、栖息地、分布等。可以直接输入 ## 标题、- 列表、**加粗** 等 Markdown 写法。'),
+  extensions: richMarkdownExtensions('描述形态、栖息地、分布等。可以直接输入 # 标题、- 列表、**加粗** 等 Markdown 写法。'),
   editorProps: {
     attributes: { id: 'description-editor', class: 'markdown-rich prose', role: 'textbox', 'aria-multiline': 'true', 'aria-required': 'true', 'aria-labelledby': 'description-label' },
     handleKeyDown(view, event) {

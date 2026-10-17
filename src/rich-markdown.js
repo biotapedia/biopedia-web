@@ -1,6 +1,7 @@
-import { Extension, markInputRule } from '@tiptap/core';
+import { Extension, markInputRule, textblockTypeInputRule } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import Blockquote from '@tiptap/extension-blockquote';
+import Heading from '@tiptap/extension-heading';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import { ListItem } from '@tiptap/extension-list';
@@ -28,7 +29,7 @@ const CjkMarkInputRules = Extension.create({
 export function richMarkdownExtensions(placeholder = '') {
   return [
     StarterKit.configure({
-      heading: { levels: [2, 3] },
+      heading: false,
       blockquote: false,
       listItem: false,
       link: false,
@@ -36,6 +37,16 @@ export function richMarkdownExtensions(placeholder = '') {
       strike: false,
       underline: false
     }),
+    // Entries only use 标题 (h2) and 小标题 (h3); `# ` and deeper levels fold into them.
+    Heading.extend({
+      parseMarkdown: (token, helpers) => helpers.createNode('heading', { level: Math.min(Math.max(token.depth || 2, 2), 3) }, helpers.parseInline(token.tokens || [])),
+      addInputRules() {
+        return [
+          textblockTypeInputRule({ find: /^#{1,2}\s$/, type: this.type, getAttributes: { level: 2 } }),
+          textblockTypeInputRule({ find: /^#{3,6}\s$/, type: this.type, getAttributes: { level: 3 } })
+        ];
+      }
+    }).configure({ levels: [2, 3] }),
     Blockquote.extend({ content: 'paragraph' }),
     ListItem.extend({ content: 'paragraph' }),
     Link.extend({
