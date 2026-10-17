@@ -94,8 +94,8 @@
           <div class="picker-heading"><strong>上级分类路径</strong><button id="parent-reset" type="button">从根目录重新选择</button></div>
           <div id="parent-path" class="picker-path"></div>
           <p id="parent-status" class="picker-status" role="status"></p>
-          <div id="existing-picker" class="picker-row"><select id="parent-choice" aria-label="选择已有的下级分类"></select><button id="parent-select" type="button">进入所选分类</button><button id="parent-more" type="button" hidden>加载更多</button></div>
-          <fieldset id="new-parent-form" class="new-parent-form"><legend>缺少下一层？创建上级分类</legend>
+          <div id="existing-picker" class="picker-row"><select id="parent-choice" aria-label="选择已有的下级分类或新增分类" disabled><option>正在加载下级分类…</option></select><button id="parent-select" type="button">进入所选分类</button><button id="parent-more" type="button" hidden>加载更多</button></div>
+          <fieldset id="new-parent-form" class="new-parent-form" hidden><legend>创建缺少的上级分类</legend>
             <div class="form-grid">
               <label class="form-field"><span>分类级别</span><select id="new-parent-rank"></select></label>
               <label class="form-field"><span>中文名</span><input id="new-parent-name" maxlength="120" placeholder="例如：鹅膏属"></label>

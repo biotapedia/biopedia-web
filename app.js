@@ -251,11 +251,25 @@ const dialog = $('#contribute-dialog');
 let parentPath = [];
 let parentPage = null;
 let pickerSequence = 0;
+const newParentChoice = '__new__';
 const parentRank = $('#new-parent-rank');
 parentRank.replaceChildren(...Array.from($('[name="rank"]').options, option => option.cloneNode(true)));
 
 function pickerParent() { return parentPath.at(-1) || null; }
 function pickerLabel(node) { return `${node.name_zh} · ${rankLabel(node.rank)}${node.pending ? '（本次新增）' : ''}`; }
+function newParentOption() {
+  const option = document.createElement('option');
+  option.value = newParentChoice;
+  option.textContent = '没有我想要的分类，新增一个…';
+  return option;
+}
+function syncParentChoice() {
+  const choice = $('#parent-choice');
+  const creating = choice.value === newParentChoice;
+  $('#new-parent-form').hidden = !creating;
+  $('#parent-select').hidden = creating;
+  $('#parent-select').disabled = choice.disabled || !choice.value || creating;
+}
 function updatePickerPath() {
   const path = $('#parent-path');
   path.replaceChildren(makeText('span', 'picker-root', '根目录'));
@@ -271,34 +285,51 @@ function updatePickerPath() {
 async function loadPickerPage(page = 1) {
   const sequence = pickerSequence;
   const parent = pickerParent();
+  const choice = $('#parent-choice');
   if (parent?.pending) {
-    $('#existing-picker').hidden = true;
-    $('#parent-status').textContent = '新建分类下还没有已有条目，可继续添加缺失层级。';
+    parentPage = null;
+    choice.replaceChildren(newParentOption());
+    choice.disabled = false;
+    $('#parent-more').hidden = true;
+    syncParentChoice();
+    $('#parent-status').textContent = '这是本次新增的分类，可继续补充缺失层级，或直接填写下方目标条目。';
     return;
   }
-  $('#existing-picker').hidden = false;
-  $('#parent-select').disabled = true;
+  if (page === 1) {
+    parentPage = null;
+    choice.replaceChildren(makeText('option', '', '正在加载下级分类…'));
+    choice.disabled = true;
+    syncParentChoice();
+  }
   $('#parent-more').hidden = true;
   $('#parent-status').textContent = '正在读取下级分类…';
   try {
     const data = await fetchData(parent ? `children/${parent.id}/${page}.json` : 'roots.json');
     if (sequence !== pickerSequence || !dialog.open) return;
-    const choice = $('#parent-choice');
     if (page === 1) choice.replaceChildren();
+    const createOption = choice.querySelector(`option[value="${newParentChoice}"]`);
     for (const item of data.items) {
       const option = document.createElement('option');
       option.value = item.id;
       option.textContent = `${item.name_zh} · ${rankLabel(item.rank)} · ${item.scientific_name}`;
       option.dataset.rank = item.rank;
       option.dataset.name = item.name_zh;
-      choice.append(option);
+      choice.insertBefore(option, createOption);
     }
+    if (page === 1) choice.append(newParentOption());
+    choice.disabled = false;
     parentPage = data.next ?? null;
     $('#parent-more').hidden = parentPage === null;
-    $('#parent-select').disabled = choice.options.length === 0;
-    $('#parent-status').textContent = choice.options.length ? '选择已有分类继续向下，或添加尚不存在的分类。' : '这里尚无下级分类，可以添加新的上级分类。';
+    syncParentChoice();
+    $('#parent-status').textContent = data.items.length || page > 1 ? '选择已有分类继续向下；若没有合适的分类，请选列表末尾的“没有我想要的分类”。' : '这里尚无下级分类，请填写下方表单新增。';
   } catch (error) {
-    if (sequence === pickerSequence) $('#parent-status').textContent = `读取分类失败：${error.message}`;
+    if (sequence !== pickerSequence) return;
+    if (page === 1) {
+      choice.replaceChildren(newParentOption());
+      choice.disabled = false;
+      syncParentChoice();
+    }
+    $('#parent-status').textContent = `读取分类失败：${error.message}。新增前请确认该分类尚不存在。`;
   }
 }
 
@@ -331,9 +362,15 @@ dialog.addEventListener('click', event => { if (event.target === dialog) dialog.
 $('#parent-reset').addEventListener('click', () => { parentPath = []; refreshPicker(); });
 $('#parent-undo').addEventListener('click', () => { parentPath.pop(); refreshPicker(); });
 $('#parent-more').addEventListener('click', () => { if (parentPage !== null) loadPickerPage(parentPage); });
+$('#parent-choice').addEventListener('change', () => {
+  syncParentChoice();
+  $('#parent-status').textContent = $('#parent-choice').value === newParentChoice
+    ? '填写下方表单，新增这一层分类。'
+    : '点击“进入所选分类”继续向下选择。';
+});
 $('#parent-select').addEventListener('click', () => {
   const selected = $('#parent-choice').selectedOptions[0];
-  if (!selected) return;
+  if (!selected || selected.value === newParentChoice) return;
   parentPath.push({ id: selected.value, name_zh: selected.dataset.name, rank: selected.dataset.rank, pending: false });
   refreshPicker();
 });
