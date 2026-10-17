@@ -32,7 +32,32 @@
   background: #f0efdf;
 }
 .picker-heading, .picker-root { color: #3d5941; }
-.picker-path { color: #5b6b58; }
+.picker-help { color: #777a6c; font-size: 11px; font-weight: 400; }
+.picker-path {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  color: #5b6b58;
+}
+.picker-path-node {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 32px;
+  padding: 5px 9px;
+  border: 1px solid #b8b69d;
+  border-radius: 0;
+  background: #faf7ec;
+  color: #3d5941;
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: left;
+}
+.picker-path-node:hover { border-color: #75886b; background: #e8e9d8; }
+.picker-path-node span { color: #8b917a; font-size: 15px; line-height: 1; }
+.picker-path-node.picker-new { border-style: dashed; color: #855d34; }
+.picker-separator { color: #7e8c73; font-size: 13px; }
 .picker-status { color: #72796b; }
 .new-parent-form { border-color: #b6bda1; border-radius: 0; background: #f8f5ea; }
 .new-parent-form legend { color: #4e694e; }

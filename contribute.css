@@ -94,7 +94,6 @@
 .picker-row wa-select { flex: 1 1 290px; }
 .picker-row wa-button { flex: 0 0 auto; }
 .new-parent-form wa-button { margin-top: 12px; }
-.parent-undo { display: block; margin-top: 12px; }
 .draft-panel wa-textarea::part(textarea) { font-size: 11px; line-height: 1.4; }
 
 .markdown-field > label { color: #3b5845; font-weight: 700; }

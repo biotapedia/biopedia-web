@@ -1,17 +1,19 @@
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, nextTick, onMounted, reactive, ref } from 'vue';
 import MarkdownEditor from './MarkdownEditor.vue';
 import { fetchData, fetchTaxon, ancestorPath } from '../catalog-api.js';
 import { markdownImageUrls } from '../markdown.js';
 import { nextRank, rankLabel, rankNames, safeHttps } from '../taxonomy.js';
 
 const formRef = ref(null);
+const pickerSelect = ref(null);
 const parentPath = ref([]);
 const choices = ref([]);
 const choice = ref('');
 const parentPage = ref(null);
 const pickerStatus = ref('');
 const pickerLoading = ref(false);
+const pickerVersion = ref(0);
 const newParent = reactive({ rank: 'kingdom', name_zh: '', scientific_name: '', description: '' });
 const form = reactive({ rank: 'kingdom', name_zh: '', scientific_name: '', description: '', image_url: '', image_credit: '', source_url: '' });
 const rankOptions = Object.entries(rankNames);
@@ -61,14 +63,22 @@ async function loadPickerPage(page = 1) {
 }
 function refreshPicker() {
   pickerSequence++;
+  pickerVersion.value++;
   draftVisible.value = false;
   const suggested = pickerParent.value ? nextRank[pickerParent.value.rank] : 'kingdom';
   form.rank = suggested || 'unranked';
   newParent.rank = suggested || 'unranked';
-  loadPickerPage();
+  return loadPickerPage();
 }
-function resetParent() { parentPath.value = []; refreshPicker(); }
-function undoParent() { parentPath.value.pop(); refreshPicker(); }
+async function editPath(index) {
+  if (index < parentPath.value.length) {
+    parentPath.value = parentPath.value.slice(0, index);
+    await refreshPicker();
+  }
+  await nextTick();
+  pickerSelect.value?.focus();
+  pickerSelect.value?.show();
+}
 function selectChoice(value) {
   choice.value = value;
   if (!value || value === '__new__') return;
@@ -206,12 +216,20 @@ onMounted(async () => {
         <section class="parent-picker" aria-label="选择上级分类">
           <div class="picker-heading">
             <strong>上级分类路径</strong>
-            <wa-button appearance="plain" variant="brand" size="s" type="button" @click="resetParent">从根目录重新选择</wa-button>
+            <span class="picker-help">点击路径中的分类可重选</span>
           </div>
-          <div class="picker-path"><span class="picker-root">根目录</span><span v-for="(node, index) in parentPath" :key="index" :class="{ 'picker-new': node.pending }"> → {{ pickerLabel(node) }}</span></div>
+          <nav class="picker-path" aria-label="已选择的上级分类路径">
+            <button class="picker-path-node picker-root" type="button" aria-label="从根目录重新选择分类" @click="editPath(0)">根目录 <span aria-hidden="true">⌄</span></button>
+            <template v-for="(node, index) in parentPath" :key="index">
+              <span class="picker-separator" aria-hidden="true">→</span>
+              <button class="picker-path-node" :class="{ 'picker-new': node.pending }" type="button" :aria-label="`更改${pickerLabel(node)}，并清除其下级分类`" @click="editPath(index)">{{ pickerLabel(node) }} <span aria-hidden="true">⌄</span></button>
+            </template>
+          </nav>
           <p class="picker-status" role="status">{{ pickerStatus }}</p>
           <div class="picker-row">
             <wa-select
+              ref="pickerSelect"
+              :key="pickerVersion"
               label="选择已有的下级分类或新增分类"
               placeholder="选择分类后自动进入…"
               :value.prop="choice"
@@ -239,7 +257,6 @@ onMounted(async () => {
             </div>
             <wa-button appearance="outlined" variant="brand" size="s" type="button" @click="addParent">添加到本次投稿路径</wa-button>
           </fieldset>
-          <wa-button v-if="parentPath.length" class="parent-undo" appearance="plain" variant="brand" size="s" type="button" @click="undoParent">撤销上一步</wa-button>
         </section>
 
         <div class="form-grid">
