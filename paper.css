@@ -1,0 +1,199 @@
+/* A field-guide surface shared by the catalog and contribution pages. */
+:root {
+  --ink: #2d352e;
+  --muted: #6f7167;
+  --deep: #303f34;
+  --accent: #c7b477;
+  --paper: #f2eddf;
+  --line: #c9c0a9;
+  --card: #fbf8ef;
+  --shadow-soft: 3px 4px 0 rgba(75, 67, 48, .15);
+  --shadow-lift: 6px 7px 0 rgba(75, 67, 48, .18);
+  --wa-color-brand-95: #f2f0e7;
+  --wa-color-brand-90: #e8e6d8;
+  --wa-color-brand-80: #d3d7c2;
+  --wa-color-brand-70: #b8c4a4;
+  --wa-color-brand-60: #849b78;
+  --wa-color-brand-50: #5d795f;
+  --wa-color-brand-40: #45664e;
+  --wa-color-brand-30: #355340;
+  --wa-color-brand-20: #2c4335;
+  --wa-color-brand-10: #23372d;
+  --wa-color-brand-05: #19291f;
+}
+
+body {
+  background-color: #ebe5d6;
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(86, 72, 47, .018) 3px 4px),
+    repeating-linear-gradient(90deg, transparent 0 5px, rgba(86, 72, 47, .012) 5px 6px);
+  color: var(--ink);
+}
+a:focus-visible, button:focus-visible, wa-button:focus-visible, .taxon-link:focus-visible {
+  outline-color: #8f7240;
+}
+
+/* The title page uses ruled paper and a botanical ink drawing. */
+.topbar {
+  background: #f7f2e5;
+  border-bottom: 1px solid #b8af99;
+  box-shadow: 0 2px 0 rgba(66, 59, 42, .07);
+  backdrop-filter: none;
+}
+.brand { font-family: Georgia, 'Songti SC', 'STSong', serif; }
+.brand-mark {
+  border: 0;
+  border-right: 1px solid #b3a88d;
+  border-radius: 0;
+  background: none;
+  color: #57694b;
+}
+.brand small { color: #777466; }
+.topbar nav a { color: #485e4c; }
+.topbar nav a:hover { color: #263d31; }
+.header-contribute, .back-to-catalog {
+  border-color: #9c977f;
+  border-radius: 1px;
+  background: #f4edda;
+  color: #3b533f;
+  box-shadow: 2px 2px 0 #d6cbb3;
+}
+.header-contribute:hover, .back-to-catalog:hover { background: #e9dec3; color: #283e31; }
+
+.hero {
+  border: 1px solid #aaa088;
+  border-radius: 1px;
+  background: linear-gradient(115deg, #f7f3e8 0%, #f4eee0 56%, #e7dfca 100%);
+  color: var(--ink);
+  box-shadow: 5px 6px 0 rgba(76, 67, 48, .16);
+}
+.hero::before {
+  inset: 11px;
+  border: 1px solid rgba(129, 116, 86, .38);
+  background: none;
+}
+.hero-copy { padding-left: 10px; }
+.eyebrow, .section-kicker { color: #776f55; font-family: Georgia, 'Songti SC', serif; }
+.eyebrow-dot { border-radius: 0; background: #a28752; box-shadow: none; transform: rotate(45deg); }
+.hero h1 { color: #293d31; }
+.hero h1 em { color: #6e7954; }
+.hero-description { color: #5c665b; }
+.primary-link {
+  border: 1px solid #304b38;
+  border-radius: 1px;
+  background: #344d3a;
+  color: #f9f5e9;
+  box-shadow: 3px 3px 0 #b7aa8b;
+}
+.primary-link:hover { background: #48624a; }
+.hero-note { color: #8a816d; }
+.hero-art { opacity: 1; }
+.orbit { border-color: rgba(90, 99, 69, .35); }
+.orbit-two { border-color: rgba(90, 99, 69, .24); }
+.orbit-three { border-color: rgba(90, 99, 69, .42); }
+.hero-art::before, .hero-art::after { background: rgba(111, 107, 79, .3); }
+.leaf {
+  border-color: rgba(67, 92, 64, .75);
+  background: linear-gradient(145deg, rgba(139, 154, 112, .16), rgba(139, 154, 112, .02));
+}
+.leaf::after { background: rgba(67, 92, 64, .52); }
+.art-center {
+  border: 1px solid #839078;
+  background: #f3ebd8;
+  color: #3d583f;
+  box-shadow: 0 0 0 8px #eee6d2, 0 0 0 9px #b3a990;
+}
+.art-label { color: #7c765d; }
+
+/* Loose catalog sheets, ruled sections, and square specimen cards. */
+.sidebar, .catalog-content, .contribute-sheet {
+  border-color: #bfb59e;
+  border-radius: 1px;
+  background: var(--card);
+  box-shadow: var(--shadow-soft);
+}
+.sidebar { border-top: 3px double #a79c80; }
+.sidebar-heading h2, .directory-heading h2, .detail-title, .card-body h3,
+.contribute-intro h1, .contribute-form-head h2 {
+  color: #293c30;
+  font-family: Georgia, 'Songti SC', 'STSong', serif;
+}
+.path-item { border-left: 2px solid transparent; border-radius: 0; color: #5c675b; }
+.path-item:hover { background: #f0eadb; color: #334a38; }
+.path-item.active { border-left-color: #667a57; background: #e8e1ce; color: #354d3a; }
+.path-bullet { color: #879072; }
+.sidebar-tip {
+  border-color: #c9bfa8;
+  border-left: 3px solid #8f996f;
+  border-radius: 0;
+  background: #f1ebdc;
+  color: #3c5140;
+}
+.tip-symbol { border: 1px solid #c1b598; border-radius: 0; background: #e4dcc8; color: #566b4e; }
+.sidebar-tip p { color: #495b4b; }
+.sidebar-contribute { color: #3e6747; }
+.content-topline { border-bottom: 3px double #c8bea7; }
+.content-status {
+  border: 1px solid #c9c0ac;
+  border-radius: 0;
+  background: #f1ecdf;
+  color: #596752;
+}
+.filter-field { border-color: #bfb7a3; border-radius: 0; background: #f9f6ed; }
+.filter-field:focus-within { border-color: #738566; box-shadow: 2px 2px 0 #d9cfb8; }
+.filter-field svg { stroke: #777d68; }
+.taxon-card {
+  border-color: #bdb39b;
+  border-radius: 0;
+  background: #f9f5e9;
+  box-shadow: 2px 3px 0 rgba(83, 73, 51, .13);
+}
+.taxon-link:hover .taxon-card, .taxon-link:focus-visible .taxon-card {
+  transform: translate(-2px, -2px);
+  border-color: #7f8c6b;
+  box-shadow: var(--shadow-lift);
+}
+.card-rank, .detail-rank-badge {
+  border-color: #b6bba1;
+  border-radius: 0;
+  background: #e8e9d7;
+  color: #4c664d;
+  font-family: Georgia, 'Songti SC', serif;
+}
+.card-index { color: #8c856e; font-family: Georgia, serif; }
+.card-body h3 { color: #2c4032; }
+.latin-name { color: #74786b; }
+.card-bottom { border-color: #d4cbb6; color: #626e5d; }
+.card-arrow { color: #516e50; }
+.load-more::part(button) {
+  border-color: #8c987e;
+  border-radius: 1px;
+  background: #f4efdf;
+  color: #35563f;
+  box-shadow: 2px 2px 0 #d2c8b1;
+}
+.empty-state { border-color: #bcb29b; border-radius: 0; background: #f4efdf; color: #626b58; }
+.taxon-detail { border-color: #bfc3a9; border-radius: 0; background: #f0f0e2; }
+.detail-rank { color: #5b7359; }
+.detail-latin { color: #6d796c; }
+.prose { color: #475649; }
+.prose a, .source-link { color: #3e6a49; }
+.prose img, .prose code, .prose pre { border-radius: 0; }
+.prose blockquote { border-color: #9ba785; background: #f7f3e9; color: #596b57; }
+.prose code, .prose pre { background: #e9e7d7; }
+.detail-visual { background: radial-gradient(circle at 45% 35%, #b5bfa1, #768d75 80%); }
+.detail-visual::before { border-color: rgba(255, 253, 236, .5); }
+.visual-label { color: #fffdf0; }
+.footer { border-top: 1px solid #c9bea6; color: #777468; }
+
+@media (max-width: 670px) {
+  .hero, .sidebar, .catalog-content, .contribute-sheet { border-radius: 0; }
+  .hero-copy { padding-left: 0; }
+  .hero::before { inset: 7px; }
+  .content-status { max-width: 48%; text-align: right; }
+}
+
+@media print {
+  body { background: #fff; }
+  .hero, .sidebar, .catalog-content, .contribute-sheet, .taxon-card { box-shadow: none; }
+}

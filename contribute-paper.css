@@ -1,0 +1,95 @@
+/* Contribution is a writing sheet; Web Awesome controls share its ink and edges. */
+.contribute-intro h1 em { color: #687a55; }
+.contribute-lead { color: #666d60; }
+.contribute-steps li > span {
+  border-color: #aea68e;
+  border-radius: 0;
+  background: #eee7d5;
+  color: #546b4e;
+  font-family: Georgia, serif;
+}
+.contribute-steps strong { color: #344e3a; }
+.contribute-steps p { color: #707367; }
+.contribute-note {
+  border-color: #939b76;
+  border-radius: 0;
+  background: #efe8d6;
+  color: #4e604e;
+}
+.contribute-sheet {
+  border: 1px solid #bfb59e;
+  border-top: 3px double #a79c80;
+  border-radius: 0;
+  background: var(--card);
+  box-shadow: var(--shadow-soft);
+}
+.contribute-sheet .contribute-form-intro { color: #6b7062; }
+.contribute-sheet .contribute-form-actions { border-color: #cfc5af; }
+.contribute-sheet .parent-picker {
+  border-color: #bfc2a6;
+  border-left: 3px solid #8f9a74;
+  border-radius: 0;
+  background: #f0efdf;
+}
+.picker-heading, .picker-root { color: #3d5941; }
+.picker-path { color: #5b6b58; }
+.picker-status { color: #72796b; }
+.new-parent-form { border-color: #b6bda1; border-radius: 0; background: #f8f5ea; }
+.new-parent-form legend { color: #4e694e; }
+.contribute-sheet :is(wa-input, wa-select, wa-textarea)::part(form-control-label),
+.markdown-field > label { color: #3b543f; }
+.contribute-sheet :is(wa-input, wa-select, wa-textarea)::part(hint) { color: #77796d; }
+.contribute-sheet wa-input::part(input-wrapper),
+.contribute-sheet wa-select::part(combobox),
+.contribute-sheet wa-textarea::part(textarea-wrapper) {
+  border-color: #bdb9a5;
+  border-radius: 0;
+  background: #fdfaf1;
+  box-shadow: 1px 2px 0 rgba(91, 81, 56, .07);
+}
+.contribute-sheet wa-input[readonly]::part(input-wrapper) { background: #eeeadd; }
+.contribute-sheet :is(wa-input, wa-select, wa-textarea):focus-within::part(input-wrapper),
+.contribute-sheet wa-select:focus-within::part(combobox),
+.contribute-sheet wa-textarea:focus-within::part(textarea-wrapper) { border-color: #647d5e; }
+.contribute-sheet wa-button::part(button) { border-radius: 1px; }
+.contribute-sheet wa-button[appearance="outlined"]::part(button) {
+  border-color: #a5a28e;
+  background: #f6f1e4;
+  color: #3b5840;
+}
+.contribute-sheet wa-button[appearance="filled"]::part(button) {
+  border-color: #344d3a;
+  background: #344d3a;
+  color: #f9f5e9;
+  box-shadow: 2px 2px 0 #c6b99d;
+}
+.contribute-sheet wa-button[appearance="filled"]:hover::part(button) { background: #48624a; }
+.markdown-editor { border-color: #bdb9a5; border-radius: 0; background: #fdfaf1; }
+.markdown-editor:focus-within { border-color: #647d5e; box-shadow: 2px 2px 0 #d4d6bf; }
+.markdown-toolbar { border-color: #cbc2ad; background: #eee9d9; }
+.markdown-toolbar wa-button::part(button), .editor-insert-actions wa-button::part(button) {
+  border-radius: 0;
+  color: #3f5b43;
+}
+.markdown-toolbar wa-button:hover::part(button),
+.markdown-toolbar wa-button[aria-pressed="true"]::part(button),
+.markdown-toolbar wa-button[aria-expanded="true"]::part(button) { background: #dfdfc9; }
+.contribute-sheet .markdown-editor textarea, .contribute-sheet .markdown-editor textarea:focus { background: #fdfaf1; }
+.editor-insert-panel { border-color: #bdc2a9; border-radius: 0; background: #f2f1e5; }
+.editor-insert-panel > strong { color: #385c40; }
+.markdown-preview { border-color: #c4bea9; border-radius: 0; background: #faf7eb; }
+.draft-panel { border-color: #b9c1a7; border-radius: 0; background: #f0f0e2; }
+.draft-panel p { color: #476047; }
+
+.back-to-catalog {
+  border-color: #9c977f;
+  border-radius: 1px;
+  background: #f4edda;
+  color: #3b533f;
+  box-shadow: 2px 2px 0 #d6cbb3;
+}
+.back-to-catalog:hover { background: #e9dec3; color: #283e31; }
+
+@media (max-width: 670px) {
+  .contribute-sheet { border-radius: 0; box-shadow: 3px 4px 0 rgba(75, 67, 48, .15); }
+}
