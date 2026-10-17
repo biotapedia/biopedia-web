@@ -1,19 +1,11 @@
-import { parseFrontMatter, renderMarkdown } from './markdown.js';
+import { parseFrontMatter } from './markdown.js';
+import { nextRank, rankLabel, safeHttps } from './taxonomy.js';
+import { makeText, renderPath, renderCard, renderTaxonDetail } from './catalog-components.js';
 
 const isLocal = ['localhost', '127.0.0.1'].includes(location.hostname);
 // Both repositories are sibling project sites under the same GitHub Pages host.
 // Local preview serves this directory and biota-data from the shared parent.
 const dataBase = new URL(isLocal ? '../biota-data/docs/' : '../biopedia-data/', import.meta.url);
-const rankNames = {
-  domain: '域', kingdom: '界', subkingdom: '亚界', phylum: '门', subphylum: '亚门',
-  class: '纲', subclass: '亚纲', order: '目', suborder: '亚目', family: '科',
-  subfamily: '亚科', tribe: '族', genus: '属', subgenus: '亚属', species: '种',
-  subspecies: '亚种', variety: '变种', form: '变型', clade: '演化支', unranked: '未定级'
-};
-const nextRank = {
-  kingdom: 'phylum', phylum: 'class', class: 'order', order: 'family',
-  suborder: 'family', family: 'genus', genus: 'species', species: 'subspecies'
-};
 const $ = selector => document.querySelector(selector);
 const taxonCache = new Map();
 let repositoryUrl = '';
@@ -39,13 +31,6 @@ async function fetchTaxon(id) {
   return taxonCache.get(id);
 }
 
-function rankLabel(rank) { return rankNames[rank] || rank; }
-function safeHttps(value) {
-  try {
-    const url = new URL(value);
-    return url.protocol === 'https:' && !url.username && !url.password ? url.href : null;
-  } catch { return null; }
-}
 function setStatus(message) { $('#content-status').textContent = message; }
 function showError(error) {
   $('#detail').replaceChildren();
@@ -54,46 +39,6 @@ function showError(error) {
   $('#empty-state').textContent = `${error.message}。请稍后重试。`;
   $('#directory-title').textContent = '连接失败';
   setStatus('读取失败');
-}
-
-function makeText(tag, className, text) {
-  const element = document.createElement(tag);
-  if (className) element.className = className;
-  element.textContent = text;
-  return element;
-}
-
-function renderPath(taxa) {
-  const nav = $('#path-nav');
-  nav.replaceChildren();
-  const home = document.createElement('a');
-  home.href = '#/';
-  home.className = taxa.length ? 'path-item' : 'path-item active';
-  home.append(makeText('span', 'path-bullet', '◎'), makeText('span', '', '全部分类'));
-  nav.append(home);
-  for (const [index, taxon] of taxa.entries()) {
-    const link = document.createElement('a');
-    link.href = `#/taxon/${taxon.id}`;
-    link.className = `path-item ${index === taxa.length - 1 ? 'active' : ''}`;
-    link.style.setProperty('--path-depth', String(index + 1));
-    link.append(makeText('span', 'path-bullet', '↳'), makeText('span', '', taxon.name_zh));
-    nav.append(link);
-  }
-}
-
-function renderCard(item, index) {
-  const link = document.createElement('a');
-  link.className = 'taxon-card';
-  link.href = `#/taxon/${item.id}`;
-  link.dataset.search = `${item.name_zh} ${item.scientific_name}`.toLocaleLowerCase();
-  const top = makeText('div', 'card-top', '');
-  top.append(makeText('span', 'card-rank', rankLabel(item.rank)), makeText('span', 'card-index', String(index + 1).padStart(2, '0')));
-  const text = makeText('div', 'card-body', '');
-  text.append(makeText('h3', '', item.name_zh), makeText('p', 'latin-name', item.scientific_name));
-  const bottom = makeText('div', 'card-bottom', '');
-  bottom.append(makeText('span', '', item.child_count ? `${item.child_count} 个下级分类` : '查看详情'), makeText('span', 'card-arrow', '↗'));
-  link.append(top, text, bottom);
-  return link;
 }
 
 function applyFilter() {
@@ -123,43 +68,6 @@ function resetDirectory() {
   $('#directory-filter').value = '';
   $('#empty-state').hidden = true;
   $('#load-more').hidden = true;
-}
-
-function renderTaxonDetail(taxon) {
-  const article = document.createElement('article');
-  article.className = 'taxon-detail';
-  const copy = makeText('div', 'detail-copy', '');
-  copy.append(makeText('div', 'detail-rank', `${rankLabel(taxon.rank)} / ${taxon.id}`));
-  copy.append(makeText('h2', 'detail-title', taxon.name_zh));
-  copy.append(makeText('p', 'detail-latin', taxon.scientific_name));
-  const body = makeText('div', 'prose', '');
-  body.append(renderMarkdown(taxon.body));
-  copy.append(body);
-  const source = safeHttps(taxon.source_url);
-  if (source) {
-    const citation = document.createElement('a');
-    citation.className = 'source-link';
-    citation.href = source;
-    citation.target = '_blank';
-    citation.rel = 'noopener noreferrer';
-    citation.textContent = '查看资料来源 ↗';
-    copy.append(citation);
-  }
-  const visual = makeText('div', 'detail-visual', '');
-  const photo = safeHttps(taxon.image_url);
-  if (photo) {
-    const image = document.createElement('img');
-    image.src = photo;
-    image.alt = taxon.name_zh;
-    image.loading = 'lazy';
-    image.referrerPolicy = 'no-referrer';
-    image.addEventListener('error', () => image.remove());
-    visual.append(image);
-  }
-  visual.append(makeText('span', 'visual-glyph', '✳'));
-  visual.append(makeText('span', 'visual-label', taxon.image_credit || '生命之树 / BIOTA'));
-  article.append(copy, visual);
-  $('#detail').replaceChildren(article);
 }
 
 async function ancestorPath(taxon) {

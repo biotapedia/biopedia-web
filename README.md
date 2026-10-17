@@ -1,4 +1,4 @@
-# BIOTA 图鉴前端
+# Biotapedia 图鉴前端
 
 这是一个没有构建步骤的 GitHub Pages 前端。页面本身不包含分类或物种数据；每次浏览时，它从同一 GitHub 组织的 `biopedia-data` Pages 项目请求 `roots.json`、`children/<id>/<page>.json` 和 `taxa/<id>.md`。
 
@@ -16,7 +16,9 @@ python3 -m http.server 8765
 
 把此仓库推送到 `biotapedia/biopedia-web`。在 **Settings → Pages** 中选择 **Deploy from a branch → main → /(root)**。数据仓库设置见其 README。两个默认 Pages 项目会位于 `https://biotapedia.github.io/biopedia-web/` 和 `https://biotapedia.github.io/biopedia-data/`。
 
-前端只使用浏览器原生 HTML、CSS 和 JavaScript，不需要 `npm install` 或构建。新增或编辑图鉴数据时，这个仓库无需重新发布。若使用自定义域名或不同仓库名，调整 `app.js` 中的 `dataBase` 和投稿仓库地址规则。
+前端使用浏览器原生 JavaScript 模块和 [Web Awesome](https://webawesome.com/docs) 的卡片、按钮组件，不需要 `npm install` 或构建。组件的 CSS 与加载器在 `index.html` 中固定版本并通过 CDN 加载，因此访问者需要能连接该 CDN。`theme.css` 集中管理页面主题与响应式布局，`catalog-components.js` 负责目录卡片和条目详情，`taxonomy.js` 放置分类级别相关的共用规则；`app.js` 负责数据请求和交互。
+
+新增或编辑图鉴数据时，这个仓库无需重新发布。若使用自定义域名或不同仓库名，调整 `app.js` 中的 `dataBase` 和投稿仓库地址规则。
 
 ## 投稿
 

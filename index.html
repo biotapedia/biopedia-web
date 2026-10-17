@@ -5,19 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#102d2a">
     <meta name="description" content="沿着分类树探索生命，与社区一起完善开放生物图鉴。">
-    <title>万物图鉴 · BIOTA</title>
-    <link rel="stylesheet" href="./styles.css">
-    <script type="module" src="./app.js?v=20261017-1"></script>
+    <title>万物图鉴 · Biotapedia</title>
+    <link rel="stylesheet" href="https://ka-f.webawesome.com/webawesome@3.14.0/styles/themes/default.css">
+    <script type="module" src="https://ka-f.webawesome.com/webawesome@3.14.0/webawesome.loader.js"></script>
+    <link rel="stylesheet" href="./styles.css?v=20261017-2">
+    <link rel="stylesheet" href="./theme.css?v=20261017-2">
+    <script type="module" src="./app.js?v=20261017-2"></script>
   </head>
   <body>
     <header class="topbar">
       <a class="brand" href="#/" aria-label="返回万物图鉴首页">
         <span class="brand-mark" aria-hidden="true">✳</span>
-        <span>BIOTA <small>万物图鉴</small></span>
+        <span>BIOTAPEDIA <small>万物图鉴</small></span>
       </a>
       <nav aria-label="主导航">
         <a href="#/">探索分类</a>
-        <button class="header-contribute" type="button" data-open-contribute>贡献一个条目 <span aria-hidden="true">↗</span></button>
+        <wa-button class="header-contribute" type="button" appearance="outlined" variant="brand" data-open-contribute>贡献一个条目 <span aria-hidden="true">↗</span></wa-button>
       </nav>
     </header>
 
@@ -51,11 +54,11 @@
           <h2>探索路径</h2>
         </div>
         <nav id="path-nav" class="path-nav" aria-label="当前分类路径"></nav>
-        <div class="sidebar-tip">
+        <wa-card class="sidebar-tip" appearance="plain">
           <span class="tip-symbol" aria-hidden="true">↗</span>
           <p>发现资料缺失？<br>从当前分类直接发起投稿。</p>
-          <button type="button" data-open-contribute>参与共建 <span aria-hidden="true">→</span></button>
-        </div>
+          <wa-button type="button" appearance="plain" variant="brand" data-open-contribute>参与共建 <span aria-hidden="true">→</span></wa-button>
+        </wa-card>
       </aside>
 
       <section class="catalog-content" aria-live="polite">
@@ -76,12 +79,12 @@
           </label>
         </div>
         <div id="children" class="card-grid"></div>
-        <button id="load-more" class="load-more" type="button" hidden>加载更多分类 <span aria-hidden="true">↓</span></button>
+        <wa-button id="load-more" class="load-more" type="button" appearance="outlined" variant="brand" hidden>加载更多分类 <span aria-hidden="true">↓</span></wa-button>
         <p id="empty-state" class="empty-state" hidden></p>
       </section>
     </main>
 
-    <footer class="footer"><span>BIOTA / 万物图鉴</span><span>内容由社区共同维护 · 文字存于 GitHub 仓库</span></footer>
+    <footer class="footer"><span>BIOTAPEDIA / 万物图鉴</span><span>内容由社区共同维护 · 文字存于 GitHub 仓库</span></footer>
 
     <dialog id="contribute-dialog" class="contribute-dialog">
       <form id="contribute-form" method="dialog">
@@ -124,7 +127,7 @@
           <label class="form-field"><span>资料来源（HTTPS）</span><input name="source_url" type="url" placeholder="https://example.org/source"></label>
         </div>
         <div id="draft-panel" class="draft-panel" hidden><p id="draft-message"></p><textarea id="draft-body" readonly rows="6" aria-label="投稿草稿"></textarea><a id="draft-link" href="#" target="_blank" rel="noopener noreferrer" hidden>打开 GitHub 投稿页面 ↗</a></div>
-        <div class="dialog-actions"><button class="secondary-button" id="copy-draft" type="button">复制草稿</button><button class="primary-button" type="submit">准备投稿 <span aria-hidden="true">↗</span></button></div>
+        <div class="dialog-actions"><wa-button class="secondary-button" id="copy-draft" type="button" appearance="outlined" variant="brand">复制草稿</wa-button><button class="primary-button" type="submit">准备投稿 <span aria-hidden="true">↗</span></button></div>
       </form>
     </dialog>
   </body>
