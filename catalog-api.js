@@ -1,9 +1,9 @@
-import { parseFrontMatter } from './markdown.js?v=20261017-5';
+import { parseFrontMatter } from './markdown.js';
 
 const isLocal = ['localhost', '127.0.0.1'].includes(location.hostname);
-// Both repositories are sibling project sites under the same GitHub Pages host.
-// Local preview serves this directory and biota-data from the shared parent.
-const dataBase = new URL(isLocal ? '../biota-data/docs/' : '../biopedia-data/', import.meta.url);
+const isWorkspaceBuild = isLocal && location.pathname.includes('/biota-web/dist/');
+// Pages projects are siblings. Vite serves the local data through /__data/.
+const dataBase = new URL(isLocal ? (isWorkspaceBuild ? '../../biota-data/docs/' : '/__data/') : '../biopedia-data/', location.href);
 const taxonCache = new Map();
 
 export async function fetchData(relative, kind = 'json') {

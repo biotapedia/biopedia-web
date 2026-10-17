@@ -1,24 +1,25 @@
 # Biotapedia 图鉴前端
 
-这是一个没有构建步骤的 GitHub Pages 前端。页面本身不包含分类或物种数据；每次浏览时，它从同一 GitHub 组织的 `biopedia-data` Pages 项目请求 `roots.json`、`children/<id>/<page>.json` 和 `taxa/<id>.md`。
+这是一个 Vue 3 + Vite 多页面前端，部署到 GitHub Pages。页面本身不包含分类或物种数据；每次浏览时，它从同一 GitHub 组织的 `biopedia-data` Pages 项目请求 `roots.json`、`children/<id>/<page>.json` 和 `taxa/<id>.md`。
 
 ## 本地预览
 
-两个仓库都位于同一个父目录下时，从父目录运行：
+两个仓库都位于同一个父目录下时，在本目录运行：
 
 ```sh
-python3 -m http.server 8765
+npm ci
+npm run dev
 ```
 
-打开 `http://localhost:8765/biota-web/` 浏览图鉴，或打开 `http://localhost:8765/biota-web/contribute.html` 投稿。本地页面会请求 `../biota-data/docs/`；部署在 GitHub Pages 时，它会请求 `../biopedia-data/`。不要直接以 `file://` 打开，否则浏览器无法正常 `fetch` 数据。
+打开 Vite 输出的本地地址浏览图鉴，或访问其 `contribute.html` 投稿。开发服务器会从相邻的 `biota-data/docs/` 读取数据。运行 `npm run build` 会生成 `dist/`；部署在 GitHub Pages 时，页面请求相邻的 `biopedia-data/`。不要直接以 `file://` 打开，否则浏览器无法正常 `fetch` 数据。
 
 ## 发布
 
-把此仓库推送到 `biotapedia/biopedia-web`。在 **Settings → Pages** 中选择 **Deploy from a branch → main → /(root)**。数据仓库设置见其 README。两个默认 Pages 项目会位于 `https://biotapedia.github.io/biopedia-web/` 和 `https://biotapedia.github.io/biopedia-data/`。
+把此仓库推送到 `biotapedia/biopedia-web`。在 **Settings → Pages → Build and deployment** 中把来源设为 **GitHub Actions**；`main` 分支上的工作流会执行 `npm ci`、构建并发布 `dist/`。数据仓库设置见其 README。两个默认 Pages 项目会位于 `https://biotapedia.github.io/biopedia-web/` 和 `https://biotapedia.github.io/biopedia-data/`。
 
-前端使用浏览器原生 JavaScript 模块和 [Web Awesome](https://webawesome.com/docs) 的卡片、按钮组件，不需要 `npm install` 或构建。组件的 CSS 与加载器在页面中固定版本并通过 CDN 加载，因此访问者需要能连接该 CDN。`index.html` 和 `app.js` 负责浏览目录；`contribute.html` 和 `contribute.js` 负责独立投稿页；`catalog-api.js` 共用数据请求；`catalog-components.js` 渲染目录卡片和详情；`taxonomy.js` 保存分类级别规则。`theme.css` 和 `contribute.css` 分别管理全站与投稿页样式。
+前端使用 Vue 单文件组件管理目录、分页、投稿表单和 Markdown 编辑器的状态，继续使用 [Web Awesome](https://webawesome.com/docs) 的卡片、按钮组件。Web Awesome 的 CSS 与加载器固定版本并通过 CDN 加载，因此访问者需要能连接该 CDN。`src/CatalogApp.vue` 与 `src/ContributionApp.vue` 分别负责两个页面；`src/MarkdownEditor.vue` 是投稿编辑器；`catalog-api.js` 共用数据请求；`taxonomy.js` 保存分类级别规则。`theme.css` 和 `contribute.css` 分别管理全站与投稿页样式。
 
-新增或编辑图鉴数据时，这个仓库无需重新发布。若使用自定义域名或不同仓库名，调整 `catalog-api.js` 中的 `dataBase` 和 `contribute.js` 中的投稿仓库地址规则。
+新增或编辑图鉴数据时，这个仓库无需重新发布。若使用自定义域名或不同仓库名，调整 `catalog-api.js` 中的 `dataBase` 和 `src/ContributionApp.vue` 中的投稿仓库地址规则。
 
 ## 投稿
 
