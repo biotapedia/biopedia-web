@@ -8,9 +8,9 @@
     <title>万物图鉴 · Biotapedia</title>
     <link rel="stylesheet" href="https://ka-f.webawesome.com/webawesome@3.14.0/styles/themes/default.css">
     <script type="module" src="https://ka-f.webawesome.com/webawesome@3.14.0/webawesome.loader.js"></script>
-    <link rel="stylesheet" href="./styles.css?v=20261017-2">
-    <link rel="stylesheet" href="./theme.css?v=20261017-2">
-    <script type="module" src="./app.js?v=20261017-2"></script>
+    <link rel="stylesheet" href="./styles.css?v=20261017-3">
+    <link rel="stylesheet" href="./theme.css?v=20261017-3">
+    <script type="module" src="./app.js?v=20261017-3"></script>
   </head>
   <body>
     <header class="topbar">
@@ -20,7 +20,7 @@
       </a>
       <nav aria-label="主导航">
         <a href="#/">探索分类</a>
-        <wa-button class="header-contribute" type="button" appearance="outlined" variant="brand" data-open-contribute>贡献一个条目 <span aria-hidden="true">↗</span></wa-button>
+        <a class="header-contribute" href="./contribute.html" data-contribute-link>贡献一个条目 <span aria-hidden="true">↗</span></a>
       </nav>
     </header>
 
@@ -57,7 +57,7 @@
         <wa-card class="sidebar-tip" appearance="plain">
           <span class="tip-symbol" aria-hidden="true">↗</span>
           <p>发现资料缺失？<br>从当前分类直接发起投稿。</p>
-          <wa-button type="button" appearance="plain" variant="brand" data-open-contribute>参与共建 <span aria-hidden="true">→</span></wa-button>
+          <a class="sidebar-contribute" href="./contribute.html" data-contribute-link>参与共建 <span aria-hidden="true">→</span></a>
         </wa-card>
       </aside>
 
@@ -86,49 +86,6 @@
 
     <footer class="footer"><span>BIOTAPEDIA / 万物图鉴</span><span>内容由社区共同维护 · 文字存于 GitHub 仓库</span></footer>
 
-    <dialog id="contribute-dialog" class="contribute-dialog">
-      <form id="contribute-form" method="dialog">
-        <div class="dialog-head">
-          <div><span class="section-kicker">CONTRIBUTE / 社区投稿</span><h2>添加一个分类</h2></div>
-          <button id="close-dialog" class="close-button" type="button" aria-label="关闭投稿表单">×</button>
-        </div>
-        <p class="dialog-intro">先选择已有上级分类；缺少中间层级时，可在这里补齐。所有新条目将进入同一个 Pull Request 审核。</p>
-        <section class="parent-picker" aria-label="选择上级分类">
-          <div class="picker-heading"><strong>上级分类路径</strong><button id="parent-reset" type="button">从根目录重新选择</button></div>
-          <div id="parent-path" class="picker-path"></div>
-          <p id="parent-status" class="picker-status" role="status"></p>
-          <div id="existing-picker" class="picker-row"><select id="parent-choice" aria-label="选择已有的下级分类或新增分类"><option>正在加载下级分类…</option></select><button id="parent-select" type="button">进入所选分类</button><button id="parent-more" type="button" hidden>加载更多</button></div>
-          <fieldset id="new-parent-form" class="new-parent-form" hidden><legend>创建缺少的上级分类</legend>
-            <div class="form-grid">
-              <label class="form-field"><span>新增上级分类的级别</span><select id="new-parent-rank"></select></label>
-              <label class="form-field"><span>中文名</span><input id="new-parent-name" maxlength="120" placeholder="例如：鹅膏属"></label>
-              <label class="form-field"><span>学名</span><input id="new-parent-scientific" maxlength="160" placeholder="例如：Amanita"></label>
-              <label class="form-field form-wide"><span>简介</span><textarea id="new-parent-description" minlength="20" maxlength="10000" rows="2" placeholder="请描述这一上级分类，至少 20 字。"></textarea></label>
-            </div>
-            <button id="parent-add" class="secondary-button" type="button">添加到本次投稿路径</button>
-          </fieldset>
-          <button id="parent-undo" type="button" hidden>撤销上一步</button>
-        </section>
-        <div class="form-grid">
-          <label class="form-field"><span>所选上级分类</span><input id="form-parent-label" type="text" readonly><small>可在上方切换，或添加缺失层级</small></label>
-          <label class="form-field"><span>本次条目的分类级别 *</span><select name="rank" required>
-            <option value="domain">域</option><option value="kingdom">界</option><option value="subkingdom">亚界</option>
-            <option value="phylum">门</option><option value="subphylum">亚门</option><option value="class">纲</option><option value="subclass">亚纲</option>
-            <option value="order">目</option><option value="suborder">亚目</option><option value="family">科</option><option value="subfamily">亚科</option>
-            <option value="tribe">族</option><option value="genus">属</option><option value="subgenus">亚属</option>
-            <option value="species">种</option><option value="subspecies">亚种</option><option value="variety">变种</option><option value="form">变型</option>
-            <option value="clade">演化支</option><option value="unranked">未定级</option>
-          </select><small>例如新增物种选“种”；缺失的上级分类在上方单独选择级别。</small></label>
-          <label class="form-field"><span>中文名 *</span><input name="name_zh" maxlength="120" required placeholder="例如：狮"></label>
-          <label class="form-field"><span>学名 *</span><input name="scientific_name" maxlength="160" required placeholder="例如：Panthera leo"></label>
-          <label class="form-field form-wide"><span>介绍与特征 *</span><textarea name="description" minlength="20" maxlength="10000" required rows="5" placeholder="请描述形态、栖息地、分布等，并尽量提供可核对的资料来源。"></textarea></label>
-          <label class="form-field form-wide"><span>图片外链（HTTPS）</span><input name="image_url" type="url" placeholder="https://example.org/photo.jpg"></label>
-          <label class="form-field"><span>图片作者及授权</span><input name="image_credit" maxlength="1000" placeholder="有图片时必填"></label>
-          <label class="form-field"><span>资料来源（HTTPS）</span><input name="source_url" type="url" placeholder="https://example.org/source"></label>
-        </div>
-        <div id="draft-panel" class="draft-panel" hidden><p id="draft-message"></p><textarea id="draft-body" readonly rows="6" aria-label="投稿草稿"></textarea><a id="draft-link" href="#" target="_blank" rel="noopener noreferrer" hidden>打开 GitHub 投稿页面 ↗</a></div>
-        <div class="dialog-actions"><wa-button class="secondary-button" id="copy-draft" type="button" appearance="outlined" variant="brand">复制草稿</wa-button><button class="primary-button" type="submit">准备投稿 <span aria-hidden="true">↗</span></button></div>
-      </form>
-    </dialog>
+
   </body>
 </html>

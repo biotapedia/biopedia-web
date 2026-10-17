@@ -10,18 +10,18 @@
 python3 -m http.server 8765
 ```
 
-打开 `http://localhost:8765/biota-web/`。本地页面会请求 `../biota-data/docs/`；部署在 GitHub Pages 时，它会请求 `../biopedia-data/`。不要直接以 `file://` 打开，否则浏览器无法正常 `fetch` 数据。
+打开 `http://localhost:8765/biota-web/` 浏览图鉴，或打开 `http://localhost:8765/biota-web/contribute.html` 投稿。本地页面会请求 `../biota-data/docs/`；部署在 GitHub Pages 时，它会请求 `../biopedia-data/`。不要直接以 `file://` 打开，否则浏览器无法正常 `fetch` 数据。
 
 ## 发布
 
 把此仓库推送到 `biotapedia/biopedia-web`。在 **Settings → Pages** 中选择 **Deploy from a branch → main → /(root)**。数据仓库设置见其 README。两个默认 Pages 项目会位于 `https://biotapedia.github.io/biopedia-web/` 和 `https://biotapedia.github.io/biopedia-data/`。
 
-前端使用浏览器原生 JavaScript 模块和 [Web Awesome](https://webawesome.com/docs) 的卡片、按钮组件，不需要 `npm install` 或构建。组件的 CSS 与加载器在 `index.html` 中固定版本并通过 CDN 加载，因此访问者需要能连接该 CDN。`theme.css` 集中管理页面主题与响应式布局，`catalog-components.js` 负责目录卡片和条目详情，`taxonomy.js` 放置分类级别相关的共用规则；`app.js` 负责数据请求和交互。
+前端使用浏览器原生 JavaScript 模块和 [Web Awesome](https://webawesome.com/docs) 的卡片、按钮组件，不需要 `npm install` 或构建。组件的 CSS 与加载器在页面中固定版本并通过 CDN 加载，因此访问者需要能连接该 CDN。`index.html` 和 `app.js` 负责浏览目录；`contribute.html` 和 `contribute.js` 负责独立投稿页；`catalog-api.js` 共用数据请求；`catalog-components.js` 渲染目录卡片和详情；`taxonomy.js` 保存分类级别规则。`theme.css` 和 `contribute.css` 分别管理全站与投稿页样式。
 
-新增或编辑图鉴数据时，这个仓库无需重新发布。若使用自定义域名或不同仓库名，调整 `app.js` 中的 `dataBase` 和投稿仓库地址规则。
+新增或编辑图鉴数据时，这个仓库无需重新发布。若使用自定义域名或不同仓库名，调整 `catalog-api.js` 中的 `dataBase` 和 `contribute.js` 中的投稿仓库地址规则。
 
 ## 投稿
 
-页面表单会在本地生成可供审核的 Issue 草稿。数据站点的 `config.json` 指向 `https://github.com/biotapedia/biopedia-data`。长草稿会提示用户复制后粘贴，以避免 GitHub 的网址长度限制。
+独立投稿页会在本地生成可供审核的 Issue 草稿。它支持直接访问，也支持从分类详情进入时通过 `?parent=<分类编号>` 预选上级分类。数据站点的 `config.json` 指向 `https://github.com/biotapedia/biopedia-data`。长草稿会提示用户复制后粘贴，以避免 GitHub 的网址长度限制。
 
 投稿表单可从任意页面逐级选择已有分类，并补充最多 8 个缺失的中间层级。新建的上级分类与目标条目会被编码进同一份 Issue，数据仓库在一个 Pull Request 中生成所有条目及索引。

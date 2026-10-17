@@ -33,9 +33,9 @@ wa-button { display: inline-flex; align-items: center; cursor: pointer; }
 .brand small { color: #6e8576; opacity: 1; }
 .topbar nav a { color: #42634f; }
 .topbar nav a:hover { color: #174b35; }
-.header-contribute { padding: 0; border: 0; background: none; color: #1b5b41; font-size: 12px; }
-.header-contribute::part(button) { border-radius: 999px; border-color: #a7cfac; color: #1a6040; background: #eff8ed; font-weight: 700; padding-inline: 18px; }
-.header-contribute::part(button):hover { background: #e1f0db; }
+.header-contribute { display: inline-flex; align-items: center; gap: 12px; min-height: 40px; padding: 0 18px; border: 1px solid #a7cfac; border-radius: 999px; background: #eff8ed; color: #1a6040; font-size: 12px; font-weight: 700; text-decoration: none; }
+.header-contribute span { margin-left: 0; }
+.header-contribute:hover { background: #e1f0db; color: #1a6040; }
 
 .hero {
   min-height: 370px;
@@ -72,8 +72,8 @@ wa-button { display: inline-flex; align-items: center; cursor: pointer; }
 .sidebar-tip { margin-top: 32px; padding: 17px; border: 1px solid #d6ead5; border-radius: 15px; background: linear-gradient(145deg, #eff8ed, #e5f3e1); box-shadow: none; }
 .sidebar-tip::part(body) { padding: 0; }
 .sidebar-tip p { margin: 12px 0 8px; font-size: 12px; }
-.sidebar-tip wa-button { border: 0; padding: 0; background: none; }
-.sidebar-tip wa-button::part(button) { padding: 0; min-height: 0; color: #1b6542; font-weight: 700; }
+.sidebar-contribute { display: inline-flex; align-items: center; gap: 7px; color: #1b6542; font-size: 12px; font-weight: 700; text-decoration: none; }
+.sidebar-contribute:hover { color: #12492f; text-decoration: underline; }
 .catalog-content { padding: 31px clamp(24px, 3vw, 45px) 45px; }
 .content-topline { padding-bottom: 20px; }
 .content-status { border-radius: 999px; padding: 6px 10px; background: #edf5ec; color: #3c7853; font-weight: 700; }
@@ -107,12 +107,8 @@ wa-button { display: inline-flex; align-items: center; cursor: pointer; }
 .detail-visual { background: radial-gradient(circle at 45% 35%, #9ac49d, #35664d 80%); }
 
 /* Contribution form */
-.contribute-dialog { width: min(760px, calc(100% - 28px)); max-height: min(92vh, 940px); border-color: #d4e4d8; border-radius: 20px; background: #fff; box-shadow: 0 36px 95px rgba(5, 29, 19, .34); }
-.contribute-dialog::backdrop { background: rgba(8, 36, 25, .58); }
-.contribute-dialog form { padding: 29px 31px; }
-.dialog-head h2 { font-size: 31px; }
-.close-button { width: 38px; height: 38px; background: #eef5ed; }
-.dialog-intro { font-size: 13px; }
+.contribute-form-head h2 { font-size: 31px; }
+.contribute-form-intro { font-size: 13px; }
 .parent-picker { padding: 20px; border-radius: 15px; border-color: #d8e9d9; background: #f4f9f2; }
 .picker-heading { font-size: 14px; }
 .picker-path { font-size: 12px; }
@@ -127,7 +123,7 @@ wa-button { display: inline-flex; align-items: center; cursor: pointer; }
 .form-field input, .form-field select, .form-field textarea { min-height: 43px; font-size: 13px; }
 .form-field input:focus, .form-field select:focus, .form-field textarea:focus, .picker-row select:focus { outline: none; border-color: #70a980; box-shadow: 0 0 0 3px rgba(78, 152, 96, .15); }
 .form-field input[readonly] { background: #f0f5ef; }
-.dialog-actions { align-items: center; }
+.contribute-form-actions { align-items: center; }
 .primary-button, .secondary-button { border-radius: 10px; }
 .primary-button { padding: 12px 19px; background: #195b3d; }
 .primary-button:hover { background: #26724e; }
@@ -146,7 +142,7 @@ wa-button { display: inline-flex; align-items: center; cursor: pointer; }
   .topbar { height: 68px; }
   .brand { font-size: 14px; }
   .brand-mark { width: 34px; height: 34px; font-size: 23px; }
-  .header-contribute::part(button) { padding-inline: 10px; }
+  .header-contribute { min-height: 36px; padding-inline: 10px; }
   .hero { margin: 12px 12px 0; border-radius: 19px; min-height: 330px; padding: 43px 26px; }
   .hero h1 { font-size: clamp(37px, 9vw, 53px); }
   .hero-art { width: 260px; }
@@ -155,7 +151,6 @@ wa-button { display: inline-flex; align-items: center; cursor: pointer; }
   .catalog-content { padding: 24px 18px 35px; border-radius: 16px; }
   .taxon-card-inner { min-height: 168px; padding: 15px; }
   .taxon-card { min-height: 168px; }
-  .contribute-dialog form { padding: 22px 18px; }
   .parent-picker { padding: 15px; }
   .footer { margin-inline: 18px; }
 }
