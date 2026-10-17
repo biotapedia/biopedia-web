@@ -3,7 +3,7 @@ import { parseFrontMatter, renderMarkdown } from './markdown.js';
 const isLocal = ['localhost', '127.0.0.1'].includes(location.hostname);
 // Both repositories are sibling project sites under the same GitHub Pages host.
 // Local preview serves this directory and biota-data from the shared parent.
-const dataBase = new URL(isLocal ? '../biota-data/docs/' : '../biota-data/', import.meta.url);
+const dataBase = new URL(isLocal ? '../biota-data/docs/' : '../biopedia-data/', import.meta.url);
 const rankNames = {
   domain: '域', kingdom: '界', subkingdom: '亚界', phylum: '门', subphylum: '亚门',
   class: '纲', subclass: '亚纲', order: '目', suborder: '亚目', family: '科',
@@ -353,7 +353,7 @@ fetchData('config.json').then(config => {
     repositoryUrl = config.repository_url.replace(/\/$/, '');
   } else if (location.hostname.endsWith('.github.io')) {
     const owner = location.hostname.split('.')[0];
-    repositoryUrl = `https://github.com/${owner}/biota-data`;
+    repositoryUrl = `https://github.com/${owner}/biopedia-data`;
   }
 }).catch(() => {});
 route();
