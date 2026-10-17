@@ -40,24 +40,6 @@
   letter-spacing: -.025em;
 }
 .contribute-intro h1 em { color: #408262; font-style: normal; }
-.contribute-lead { max-width: 310px; color: #65796a; font-size: 14px; line-height: 1.9; }
-.contribute-steps { display: grid; gap: 25px; margin: 39px 0 29px; padding: 0; list-style: none; }
-.contribute-steps li { display: flex; align-items: start; gap: 13px; }
-.contribute-steps li > span {
-  display: grid;
-  flex: 0 0 34px;
-  place-items: center;
-  height: 34px;
-  border: 1px solid #c9dfc8;
-  border-radius: 50%;
-  background: #eaf5e8;
-  color: #2f714d;
-  font-size: 11px;
-  font-weight: 700;
-}
-.contribute-steps strong { color: #24543c; font-size: 13px; }
-.contribute-steps p { margin: 5px 0 0; color: #718474; font-size: 12px; line-height: 1.6; }
-.contribute-note { max-width: 300px; padding: 15px 17px; border-left: 3px solid #a7cfac; border-radius: 0 10px 10px 0; background: #edf6ea; color: #486850; font-size: 12px; line-height: 1.7; }
 
 .contribute-sheet {
   min-width: 0;
@@ -67,9 +49,8 @@
   box-shadow: var(--shadow-soft);
 }
 .contribute-sheet form { padding: clamp(24px, 3vw, 42px); }
-.contribute-sheet .contribute-form-head { margin-bottom: 7px; }
+.contribute-sheet .contribute-form-head { margin-bottom: 23px; }
 .contribute-sheet .contribute-form-head h2 { font-size: 32px; }
-.contribute-sheet .contribute-form-intro { margin-bottom: 25px; font-size: 13px; }
 .contribute-sheet .parent-picker { padding: 22px; }
 .contribute-sheet .form-grid { gap: 18px; }
 .contribute-sheet .form-field { font-size: 13px; }
@@ -97,7 +78,6 @@
 .draft-panel wa-textarea::part(textarea) { font-size: 11px; line-height: 1.4; }
 
 .markdown-field > label { color: #3b5845; font-weight: 700; }
-.markdown-field > label small { display: block; margin-top: 4px; }
 .markdown-editor { overflow: hidden; border: 1px solid #d0e0d3; border-radius: 11px; background: #fff; }
 .markdown-editor:focus-within { border-color: #70a980; box-shadow: 0 0 0 3px rgba(78, 152, 96, .15); }
 .markdown-toolbar { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px; border-bottom: 1px solid #dfe9e0; background: #f6faf5; }
@@ -117,17 +97,11 @@
   .contribute-layout { grid-template-columns: 1fr; gap: 20px; width: min(760px, calc(100% - 36px)); margin-top: 26px; }
   .contribute-intro { position: static; padding: 0 4px; }
   .contribute-intro h1 { margin-bottom: 10px; }
-  .contribute-lead { max-width: 630px; margin-bottom: 0; }
-  .contribute-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 24px 0; }
-  .contribute-steps li { gap: 9px; }
-  .contribute-note { max-width: none; margin-bottom: 0; }
 }
 @media (max-width: 670px) {
   .contribute-page .topbar nav a { display: inline-flex; }
   .contribute-layout { width: calc(100% - 24px); margin: 20px auto 45px; }
   .contribute-intro h1 { font-size: 34px; }
-  .contribute-steps { grid-template-columns: 1fr; gap: 13px; }
-  .contribute-steps p { margin-top: 2px; }
   .contribute-sheet { border-radius: 17px; }
   .contribute-sheet form { padding: 23px 17px; }
   .contribute-sheet .parent-picker { padding: 16px; }

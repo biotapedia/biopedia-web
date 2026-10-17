@@ -1,21 +1,5 @@
 /* Contribution is a writing sheet; Web Awesome controls share its ink and edges. */
 .contribute-intro h1 em { color: #687a55; }
-.contribute-lead { color: #666d60; }
-.contribute-steps li > span {
-  border-color: #aea68e;
-  border-radius: 0;
-  background: #eee7d5;
-  color: #546b4e;
-  font-family: Georgia, serif;
-}
-.contribute-steps strong { color: #344e3a; }
-.contribute-steps p { color: #707367; }
-.contribute-note {
-  border-color: #939b76;
-  border-radius: 0;
-  background: #efe8d6;
-  color: #4e604e;
-}
 .contribute-sheet {
   border: 1px solid #bfb59e;
   border-top: 3px double #a79c80;
@@ -23,7 +7,6 @@
   background: var(--card);
   box-shadow: var(--shadow-soft);
 }
-.contribute-sheet .contribute-form-intro { color: #6b7062; }
 .contribute-sheet .contribute-form-actions { border-color: #cfc5af; }
 .contribute-sheet .parent-picker {
   border-color: #bfc2a6;
@@ -32,7 +15,6 @@
   background: #f0efdf;
 }
 .picker-heading, .picker-root { color: #3d5941; }
-.picker-help { color: #777a6c; font-size: 11px; font-weight: 400; }
 .picker-path {
   display: flex;
   align-items: center;

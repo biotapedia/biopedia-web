@@ -146,7 +146,6 @@ a { color: inherit; }
 
 .contribute-form-head { display: flex; justify-content: space-between; align-items: start; gap: 20px; }
 .contribute-form-head h2 { margin: 7px 0 0; font-family: 'Songti SC', 'STSong', serif; font-size: 29px; }
-.contribute-form-intro { margin: 17px 0 24px; color: #6a7d70; font-size: 12px; line-height: 1.8; }
 .parent-picker { margin-bottom: 22px; padding: 17px; border: 1px solid #d6e3d3; border-radius: 5px; background: #f0f5ec; }
 .picker-heading, .picker-row { display: flex; align-items: center; gap: 9px; }
 .picker-heading { justify-content: space-between; color: #31543c; font-size: 13px; }

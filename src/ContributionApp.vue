@@ -42,7 +42,7 @@ async function loadPickerPage(page = 1) {
     choices.value = [];
     parentPage.value = null;
     choice.value = '__new__';
-    pickerStatus.value = '这是本次新增的分类，可继续补充缺失层级，或直接填写下方目标条目。';
+    pickerStatus.value = '';
     return;
   }
   if (page === 1) {
@@ -51,14 +51,14 @@ async function loadPickerPage(page = 1) {
     choice.value = '';
   }
   pickerLoading.value = true;
-  pickerStatus.value = '正在读取下级分类…';
+  pickerStatus.value = '';
   try {
     const data = await fetchData(parent ? `children/${parent.id}/${page}.json` : 'roots.json');
     if (sequence !== pickerSequence) return;
     choices.value = [...choices.value, ...data.items];
     parentPage.value = data.next ?? null;
     choice.value = page === 1 ? (choices.value.length ? '' : '__new__') : choice.value;
-    pickerStatus.value = data.items.length || page > 1 ? '选择已有分类后会自动进入；若没有合适的分类，请选列表末尾的“没有我想要的分类”。' : '这里尚无下级分类，请填写下方表单新增。';
+    pickerStatus.value = '';
   } catch (cause) {
     if (sequence !== pickerSequence) return;
     if (page === 1) choice.value = '__new__';
@@ -257,24 +257,15 @@ onMounted(async () => {
     <section class="contribute-intro" aria-labelledby="contribute-title">
       <p class="section-kicker">CONTRIBUTE / 社区共建</p>
       <h1 id="contribute-title">让新的生命条目<br><em>加入图鉴。</em></h1>
-      <p class="contribute-lead">从任意层级开始，选择已有分类；缺少上级分类时，也可以在同一次投稿中补齐。</p>
-      <ol class="contribute-steps">
-        <li><span>01</span><div><strong>确定分类路径</strong><p>沿已有目录逐级选择，或补充缺失层级。</p></div></li>
-        <li><span>02</span><div><strong>填写条目资料</strong><p>提供名称、介绍，以及可以核对的来源。</p></div></li>
-        <li><span>03</span><div><strong>交给社区审核</strong><p>确认 GitHub 投稿后，管理员会审阅内容。</p></div></li>
-      </ol>
-      <p class="contribute-note">你的草稿会在浏览器中生成。提交时会前往 GitHub 确认。</p>
     </section>
 
     <section class="contribute-sheet" aria-label="添加条目表单">
       <form ref="formRef" method="post" @submit.prevent="submit">
         <div class="contribute-form-head"><div><span class="section-kicker">CONTRIBUTE / 社区投稿</span><h2>填写条目信息</h2></div></div>
-        <p class="contribute-form-intro">先选择已有上级分类；缺少中间层级时，可在这里补齐。所有新条目将进入同一个 Pull Request 审核。</p>
 
         <section class="parent-picker" aria-label="选择上级分类">
           <div class="picker-heading">
             <strong>上级分类路径</strong>
-            <span class="picker-help">点击路径中的分类可重选</span>
           </div>
           <nav class="picker-path" aria-label="已选择的上级分类路径">
             <span class="picker-path-node picker-root">根目录</span>
@@ -301,19 +292,19 @@ onMounted(async () => {
               </wa-select>
             </template>
           </nav>
-          <p class="picker-status" role="status">{{ pickerStatus }}</p>
+          <p v-if="pickerStatus" class="picker-status" role="status">{{ pickerStatus }}</p>
           <div class="picker-row">
             <wa-select
               :key="pickerVersion"
-              label="选择已有的下级分类或新增分类"
-              placeholder="选择分类后自动进入…"
+              label="下级分类"
+              placeholder="选择下级分类…"
               :value.prop="choice"
               :disabled="pickerLoading && !choices.length"
               @change="selectChoice($event.target.value)"
             >
               <wa-option v-if="pickerLoading && !choices.length" value="" disabled>正在加载下级分类…</wa-option>
               <wa-option v-for="item in choices" :key="item.id" :value="item.id">{{ item.name_zh }} · {{ rankLabel(item.rank) }} · {{ item.scientific_name }}</wa-option>
-              <wa-option value="__new__">没有我想要的分类，新增一个…</wa-option>
+              <wa-option value="__new__">新增分类…</wa-option>
             </wa-select>
             <wa-button v-if="parentPage !== null" appearance="outlined" variant="brand" size="s" type="button" :disabled="pickerLoading" @click="loadPickerPage(parentPage)">加载更多</wa-button>
           </div>
@@ -335,16 +326,16 @@ onMounted(async () => {
         </section>
 
         <div class="form-grid">
-          <div class="form-field"><wa-input label="所选上级分类" :value.prop="parentLabel" hint="可在上方切换，或添加缺失层级" readonly></wa-input></div>
+          <div class="form-field"><wa-input label="所选上级分类" :value.prop="parentLabel" readonly></wa-input></div>
           <div class="form-field">
-            <wa-select label="本次条目的分类级别" hint="例如新增物种选“种”；缺失的上级分类在上方单独选择级别。" name="rank" required :value.prop="form.rank" @change="form.rank = $event.target.value">
+            <wa-select label="本次条目的分类级别" name="rank" required :value.prop="form.rank" @change="form.rank = $event.target.value">
               <wa-option v-for="[value, label] in rankOptions" :key="value" :value="value">{{ label }}</wa-option>
             </wa-select>
           </div>
           <div class="form-field"><wa-input label="中文名" name="name_zh" required maxlength="120" :value.prop="form.name_zh" placeholder="例如：狮" @input="form.name_zh = $event.target.value"></wa-input></div>
           <div class="form-field"><wa-input label="学名" name="scientific_name" required maxlength="160" :value.prop="form.scientific_name" placeholder="例如：Panthera leo" @input="form.scientific_name = $event.target.value"></wa-input></div>
           <MarkdownEditor v-model="form.description" />
-          <div class="form-field form-wide"><wa-input label="封面图片外链（HTTPS）" hint="用于条目顶部；正文中的图片请用上方“插入图片”按钮。" name="image_url" type="url" :value.prop="form.image_url" placeholder="https://example.org/photo.jpg" @input="form.image_url = $event.target.value"></wa-input></div>
+          <div class="form-field form-wide"><wa-input label="封面图片外链（HTTPS）" name="image_url" type="url" :value.prop="form.image_url" placeholder="https://example.org/photo.jpg" @input="form.image_url = $event.target.value"></wa-input></div>
           <div class="form-field"><wa-input label="封面图片作者及授权" name="image_credit" maxlength="1000" :value.prop="form.image_credit" placeholder="填写封面图片时必填" @input="form.image_credit = $event.target.value"></wa-input></div>
           <div class="form-field"><wa-input label="资料来源（HTTPS）" name="source_url" type="url" :value.prop="form.source_url" placeholder="https://example.org/source" @input="form.source_url = $event.target.value"></wa-input></div>
         </div>

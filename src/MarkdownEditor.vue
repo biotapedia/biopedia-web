@@ -81,7 +81,7 @@ function insertImage() {
 
 <template>
   <div class="form-field form-wide markdown-field">
-    <label for="description-editor">介绍与特征 * <small>支持 Markdown，可使用下方按钮排版</small></label>
+    <label for="description-editor">介绍与特征 *</label>
     <div class="markdown-editor">
       <div class="markdown-toolbar" role="toolbar" aria-label="介绍与特征格式工具">
         <wa-button appearance="plain" size="s" type="button" title="标题" @click="prefixLines('## ')">标题</wa-button>
@@ -94,7 +94,7 @@ function insertImage() {
         <wa-button appearance="plain" size="s" type="button" :aria-expanded="panel === 'image'" aria-controls="markdown-image-panel" @click="openPanel('image')">插入图片</wa-button>
         <wa-button appearance="plain" size="s" type="button" :aria-pressed="previewOpen" aria-controls="markdown-preview" @click="previewOpen = !previewOpen">预览</wa-button>
       </div>
-      <textarea id="description-editor" ref="textarea" v-model="model" name="description" minlength="20" maxlength="10000" required rows="9" placeholder="请描述形态、栖息地、分布等。选中文字后点击工具栏，就能添加格式；图片可用按钮插入。"></textarea>
+      <textarea id="description-editor" ref="textarea" v-model="model" name="description" minlength="20" maxlength="10000" required rows="9" placeholder="描述形态、栖息地、分布等。"></textarea>
     </div>
     <div v-if="panel === 'link'" id="markdown-link-panel" class="editor-insert-panel">
       <strong>插入链接</strong>
