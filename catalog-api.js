@@ -1,4 +1,4 @@
-import { parseFrontMatter } from './markdown.js';
+import { parseFrontMatter } from './markdown.js?v=20261017-5';
 
 const isLocal = ['localhost', '127.0.0.1'].includes(location.hostname);
 // Both repositories are sibling project sites under the same GitHub Pages host.

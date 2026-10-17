@@ -1,5 +1,6 @@
-// Render a small Markdown subset with DOM nodes. Taxon text is community supplied,
-// so it is never inserted with innerHTML or allowed to create script URLs.
+import { safeHttps } from './taxonomy.js';
+
+// Community Markdown is rendered with DOM nodes. Raw HTML stays plain text.
 export function parseFrontMatter(text) {
   const normalized = text.replace(/\r\n/g, '\n');
   const match = normalized.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
@@ -14,22 +15,58 @@ export function parseFrontMatter(text) {
   return { ...metadata, body: match[2].trim() };
 }
 
-function appendInline(parent, source) {
-  const pattern = /\[([^\]]+)\]\((https:\/\/[^)\s]+)\)|\*\*([^*]+)\*\*/g;
+const inlinePattern = /!\[([^\]]*)\]\(([^)\s]+)\)|\[([^\]]+)\]\(([^)\s]+)\)|\*\*([\s\S]+?)\*\*|__([\s\S]+?)__|\*([^*\n]+)\*|_([^_\n]+)_|`([^`\n]+)`/g;
+const imagePattern = /!\[[^\]]*\]\(([^)\s]+)\)/g;
+
+export function markdownImageUrls(source) {
+  return [...source.matchAll(imagePattern)].map(match => match[1]);
+}
+
+function appendInline(parent, source, depth = 0) {
+  if (depth > 6) {
+    parent.append(document.createTextNode(source));
+    return;
+  }
   let cursor = 0;
-  for (const match of source.matchAll(pattern)) {
+  for (const match of source.matchAll(inlinePattern)) {
     parent.append(document.createTextNode(source.slice(cursor, match.index)));
-    if (match[1]) {
-      const link = document.createElement('a');
-      link.href = match[2];
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      link.textContent = match[1];
-      parent.append(link);
-    } else {
+    if (match[1] !== undefined) {
+      const url = safeHttps(match[2]);
+      if (url) {
+        const image = document.createElement('img');
+        image.src = url;
+        image.alt = match[1];
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        image.referrerPolicy = 'no-referrer';
+        parent.append(image);
+      } else {
+        parent.append(document.createTextNode(match[0]));
+      }
+    } else if (match[3] !== undefined) {
+      const url = safeHttps(match[4]);
+      if (url) {
+        const link = document.createElement('a');
+        link.href = url;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        appendInline(link, match[3], depth + 1);
+        parent.append(link);
+      } else {
+        parent.append(document.createTextNode(match[0]));
+      }
+    } else if (match[5] !== undefined || match[6] !== undefined) {
       const strong = document.createElement('strong');
-      strong.textContent = match[3];
+      appendInline(strong, match[5] ?? match[6], depth + 1);
       parent.append(strong);
+    } else if (match[7] !== undefined || match[8] !== undefined) {
+      const emphasis = document.createElement('em');
+      appendInline(emphasis, match[7] ?? match[8], depth + 1);
+      parent.append(emphasis);
+    } else {
+      const code = document.createElement('code');
+      code.textContent = match[9];
+      parent.append(code);
     }
     cursor = match.index + match[0].length;
   }
@@ -38,25 +75,74 @@ function appendInline(parent, source) {
 
 export function renderMarkdown(source) {
   const fragment = document.createDocumentFragment();
-  const blocks = source.replace(/\r\n/g, '\n').trim().split(/\n\s*\n/);
-  for (const block of blocks) {
-    if (!block.trim()) continue;
-    const heading = block.match(/^(#{1,3})\s+(.+)$/);
+  const lines = source.replace(/\r\n/g, '\n').split('\n');
+  const isBlockStart = line => /^(?:#{1,3}\s+|[-*+]\s+|\d+[.)]\s+|>\s?|```|(?:-{3,}|\*{3,})\s*$)/.test(line);
+  for (let index = 0; index < lines.length;) {
+    const line = lines[index];
+    if (!line.trim()) {
+      index += 1;
+      continue;
+    }
+    if (line.startsWith('```')) {
+      const codeLines = [];
+      index += 1;
+      while (index < lines.length && !lines[index].startsWith('```')) {
+        codeLines.push(lines[index]);
+        index += 1;
+      }
+      if (index < lines.length) index += 1;
+      const pre = document.createElement('pre');
+      const code = document.createElement('code');
+      code.textContent = codeLines.join('\n');
+      pre.append(code);
+      fragment.append(pre);
+      continue;
+    }
+    const heading = line.match(/^(#{1,3})\s+(.+)$/);
     if (heading) {
-      const element = document.createElement(`h${Math.min(heading[1].length + 2, 5)}`);
+      const element = document.createElement(`h${heading[1].length}`);
       appendInline(element, heading[2]);
       fragment.append(element);
-    } else if (block.split('\n').every(line => /^[-*]\s+/.test(line))) {
+      index += 1;
+    } else if (/^[-*+]\s+/.test(line)) {
       const list = document.createElement('ul');
-      for (const line of block.split('\n')) {
+      while (index < lines.length && /^[-*+]\s+/.test(lines[index])) {
         const item = document.createElement('li');
-        appendInline(item, line.replace(/^[-*]\s+/, ''));
+        appendInline(item, lines[index].replace(/^[-*+]\s+/, ''));
         list.append(item);
+        index += 1;
       }
       fragment.append(list);
+    } else if (/^\d+[.)]\s+/.test(line)) {
+      const list = document.createElement('ol');
+      while (index < lines.length && /^\d+[.)]\s+/.test(lines[index])) {
+        const item = document.createElement('li');
+        appendInline(item, lines[index].replace(/^\d+[.)]\s+/, ''));
+        list.append(item);
+        index += 1;
+      }
+      fragment.append(list);
+    } else if (/^>\s?/.test(line)) {
+      const quoteLines = [];
+      while (index < lines.length && /^>\s?/.test(lines[index])) {
+        quoteLines.push(lines[index].replace(/^>\s?/, ''));
+        index += 1;
+      }
+      const quote = document.createElement('blockquote');
+      appendInline(quote, quoteLines.join(' '));
+      fragment.append(quote);
+    } else if (/^(?:-{3,}|\*{3,})\s*$/.test(line)) {
+      fragment.append(document.createElement('hr'));
+      index += 1;
     } else {
+      const paragraphLines = [line];
+      index += 1;
+      while (index < lines.length && lines[index].trim() && !isBlockStart(lines[index])) {
+        paragraphLines.push(lines[index]);
+        index += 1;
+      }
       const paragraph = document.createElement('p');
-      appendInline(paragraph, block.replace(/\n/g, ' '));
+      appendInline(paragraph, paragraphLines.join(' '));
       fragment.append(paragraph);
     }
   }

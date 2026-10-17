@@ -1,6 +1,8 @@
 import { nextRank, rankLabel, safeHttps } from './taxonomy.js';
-import { makeText } from './catalog-components.js';
-import { fetchData, fetchTaxon, ancestorPath } from './catalog-api.js';
+import { makeText } from './catalog-components.js?v=20261017-5';
+import { fetchData, fetchTaxon, ancestorPath } from './catalog-api.js?v=20261017-5';
+import { markdownImageUrls } from './markdown.js?v=20261017-5';
+import { initMarkdownEditor } from './markdown-editor.js?v=20261017-5';
 
 const $ = selector => document.querySelector(selector);
 let repositoryUrl = '';
@@ -178,7 +180,12 @@ function prepareDraft() {
     $('#draft-message').textContent = '图片链接和资料来源必须使用有效的 HTTPS 地址。';
     return null;
   }
-  const body = [
+  if (markdownImageUrls(payload.description).some(url => !safeHttps(url))) {
+    $('#draft-panel').hidden = false;
+    $('#draft-message').textContent = '介绍中的图片也必须使用有效的 HTTPS 外链。';
+    return null;
+  }
+  const summary = [
     '## 新分类投稿',
     `- 中文名：${payload.name_zh}`,
     `- 学名：${payload.scientific_name}`,
@@ -188,9 +195,11 @@ function prepareDraft() {
     payload.image_url ? `- 图片：${payload.image_url}` : '',
     payload.image_credit ? `- 图片作者及授权：${payload.image_credit}` : '',
     payload.source_url ? `- 资料来源：${payload.source_url}` : '',
-    '', '### 介绍', payload.description, '',
+  ].filter(Boolean);
+  const body = [
+    ...summary, '', '### 介绍', '', payload.description, '',
     `<!-- BIOTA_SUBMISSION_V1\n${encodePayload(payload)}\n-->`
-  ].filter(Boolean).join('\n');
+  ].join('\n');
   if (new TextEncoder().encode(JSON.stringify(payload)).length > 20000 || body.length > 50000) {
     $('#draft-panel').hidden = false;
     $('#draft-message').textContent = '投稿内容过长，请缩短介绍或分多次投稿。';
@@ -250,4 +259,5 @@ fetchData('config.json').then(config => {
     repositoryUrl = `https://github.com/${owner}/biopedia-data`;
   }
 }).catch(() => {});
+initMarkdownEditor();
 initializeContribution();

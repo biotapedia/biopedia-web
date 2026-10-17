@@ -1,6 +1,6 @@
 import { rankLabel } from './taxonomy.js';
-import { renderPath, renderCard, renderTaxonDetail } from './catalog-components.js';
-import { fetchData, fetchTaxon, ancestorPath } from './catalog-api.js';
+import { renderPath, renderCard, renderTaxonDetail } from './catalog-components.js?v=20261017-5';
+import { fetchData, fetchTaxon, ancestorPath } from './catalog-api.js?v=20261017-5';
 
 const $ = selector => document.querySelector(selector);
 let currentTaxon = null;

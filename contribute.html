@@ -8,10 +8,10 @@
     <title>添加条目 · Biotapedia</title>
     <link rel="stylesheet" href="https://ka-f.webawesome.com/webawesome@3.14.0/styles/themes/default.css">
     <script type="module" src="https://ka-f.webawesome.com/webawesome@3.14.0/webawesome.loader.js"></script>
-    <link rel="stylesheet" href="./styles.css?v=20261017-3">
-    <link rel="stylesheet" href="./theme.css?v=20261017-3">
-    <link rel="stylesheet" href="./contribute.css?v=20261017-3">
-    <script type="module" src="./contribute.js?v=20261017-3"></script>
+    <link rel="stylesheet" href="./styles.css?v=20261017-4">
+    <link rel="stylesheet" href="./theme.css?v=20261017-4">
+    <link rel="stylesheet" href="./contribute.css?v=20261017-4">
+    <script type="module" src="./contribute.js?v=20261017-5"></script>
   </head>
   <body class="contribute-page">
     <header class="topbar">
@@ -68,9 +68,41 @@
             </select><small>例如新增物种选“种”；缺失的上级分类在上方单独选择级别。</small></label>
             <label class="form-field"><span>中文名 *</span><input name="name_zh" maxlength="120" required placeholder="例如：狮"></label>
             <label class="form-field"><span>学名 *</span><input name="scientific_name" maxlength="160" required placeholder="例如：Panthera leo"></label>
-            <label class="form-field form-wide"><span>介绍与特征 *</span><textarea name="description" minlength="20" maxlength="10000" required rows="5" placeholder="请描述形态、栖息地、分布等，并尽量提供可核对的资料来源。"></textarea></label>
-            <label class="form-field form-wide"><span>图片外链（HTTPS）</span><input name="image_url" type="url" placeholder="https://example.org/photo.jpg"></label>
-            <label class="form-field"><span>图片作者及授权</span><input name="image_credit" maxlength="1000" placeholder="有图片时必填"></label>
+            <div class="form-field form-wide markdown-field">
+              <label for="description-editor">介绍与特征 * <small>支持 Markdown，可使用下方按钮排版</small></label>
+              <div class="markdown-editor">
+                <div class="markdown-toolbar" role="toolbar" aria-label="介绍与特征格式工具">
+                  <button type="button" data-md-prefix="## " title="标题">标题</button>
+                  <button type="button" data-md-prefix="### " title="小标题">小标题</button>
+                  <button type="button" data-md-wrap="**" data-placeholder="加粗文字" title="加粗"><strong>B</strong></button>
+                  <button type="button" data-md-wrap="*" data-placeholder="斜体文字" title="斜体"><em>I</em></button>
+                  <button type="button" data-md-prefix="- " title="无序列表">• 列表</button>
+                  <button type="button" data-md-prefix="1. " title="有序列表">1. 列表</button>
+                  <button type="button" id="markdown-link-toggle" aria-expanded="false" aria-controls="markdown-link-panel">插入链接</button>
+                  <button type="button" id="markdown-image-toggle" aria-expanded="false" aria-controls="markdown-image-panel">插入图片</button>
+                  <button type="button" id="markdown-preview-toggle" aria-pressed="false" aria-controls="markdown-preview">预览</button>
+                </div>
+                <textarea id="description-editor" name="description" minlength="20" maxlength="10000" required rows="9" placeholder="请描述形态、栖息地、分布等。选中文字后点击工具栏，就能添加格式；图片可用按钮插入。"></textarea>
+              </div>
+              <div id="markdown-link-panel" class="editor-insert-panel" hidden>
+                <strong>插入链接</strong>
+                <label>显示文字<input id="markdown-link-text" type="text" placeholder="例如：资料来源"></label>
+                <label>HTTPS 链接<input id="markdown-link-url" type="text" inputmode="url" placeholder="https://example.org/source"></label>
+                <p data-editor-status role="status"></p>
+                <div class="editor-insert-actions"><button type="button" data-editor-cancel>取消</button><button type="button" data-editor-insert>插入链接</button></div>
+              </div>
+              <div id="markdown-image-panel" class="editor-insert-panel" hidden>
+                <strong>插入正文图片</strong>
+                <label>图片说明<input id="markdown-image-alt" type="text" placeholder="例如：毒鹅膏的菌盖"></label>
+                <label>图片外链（HTTPS）<input id="markdown-image-url" type="text" inputmode="url" placeholder="https://example.org/photo.jpg"></label>
+                <label>图片作者及授权<input id="markdown-image-credit" type="text" placeholder="例如：张三，CC BY 4.0"></label>
+                <p data-editor-status role="status"></p>
+                <div class="editor-insert-actions"><button type="button" data-editor-cancel>取消</button><button type="button" data-editor-insert>插入图片</button></div>
+              </div>
+              <div id="markdown-preview" class="markdown-preview prose" aria-label="介绍与特征预览" hidden></div>
+            </div>
+            <label class="form-field form-wide"><span>封面图片外链（HTTPS）</span><input name="image_url" type="url" placeholder="https://example.org/photo.jpg"><small>用于条目顶部；正文中的图片请用上方“插入图片”按钮。</small></label>
+            <label class="form-field"><span>封面图片作者及授权</span><input name="image_credit" maxlength="1000" placeholder="填写封面图片时必填"></label>
             <label class="form-field"><span>资料来源（HTTPS）</span><input name="source_url" type="url" placeholder="https://example.org/source"></label>
           </div>
           <div id="draft-panel" class="draft-panel" hidden><p id="draft-message"></p><textarea id="draft-body" readonly rows="6" aria-label="投稿草稿"></textarea><a id="draft-link" href="#" target="_blank" rel="noopener noreferrer" hidden>打开 GitHub 投稿页面 ↗</a></div>

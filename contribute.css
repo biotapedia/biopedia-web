@@ -78,6 +78,25 @@
 .contribute-sheet .form-field textarea { font-size: 14px; }
 .contribute-sheet .contribute-form-actions { padding-top: 9px; border-top: 1px solid #e5eee5; }
 
+.markdown-field > label { color: #3b5845; font-weight: 700; }
+.markdown-field > label small { display: block; margin-top: 4px; }
+.markdown-editor { overflow: hidden; border: 1px solid #d0e0d3; border-radius: 11px; background: #fff; }
+.markdown-editor:focus-within { border-color: #70a980; box-shadow: 0 0 0 3px rgba(78, 152, 96, .15); }
+.markdown-toolbar { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px; border-bottom: 1px solid #dfe9e0; background: #f6faf5; }
+.markdown-toolbar button { min-height: 32px; padding: 5px 9px; border: 1px solid transparent; border-radius: 7px; background: transparent; color: #315842; font-size: 12px; font-weight: 700; }
+.markdown-toolbar button:hover, .markdown-toolbar button[aria-pressed="true"], .markdown-toolbar button[aria-expanded="true"] { border-color: #bdd8c0; background: #e7f2e4; }
+.markdown-toolbar button:focus-visible, .editor-insert-actions button:focus-visible { outline: 2px solid #64a77b; outline-offset: 2px; }
+.contribute-sheet .markdown-editor textarea, .contribute-sheet .markdown-editor textarea:focus { display: block; width: 100%; min-height: 185px; padding: 16px; border: 0; border-radius: 0; background: #fff; box-shadow: none; outline: none; line-height: 1.8; }
+.editor-insert-panel { display: grid; gap: 11px; margin-top: 12px; padding: 17px; border: 1px solid #cde2ce; border-radius: 11px; background: #f4faf2; }
+.editor-insert-panel > strong { color: #285c3e; font-size: 13px; }
+.editor-insert-panel label { display: grid; gap: 5px; color: #496b53; font-size: 12px; font-weight: 700; }
+.editor-insert-panel input { min-height: 39px; }
+.editor-insert-panel p { min-height: 0; margin: 0; color: #a14632; font-size: 12px; }
+.editor-insert-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.editor-insert-actions button { padding: 9px 13px; border: 1px solid #b6d3bb; border-radius: 8px; background: #fff; color: #285c3e; font-size: 12px; font-weight: 700; }
+.editor-insert-actions button[data-editor-insert] { border-color: #276446; background: #276446; color: #fff; }
+.markdown-preview { min-height: 72px; max-width: none; margin-top: 12px; padding: 18px; border: 1px solid #d6e6d7; border-radius: 11px; background: #fbfdf9; font-weight: 400; }
+
 @media (max-width: 900px) {
   .contribute-layout { grid-template-columns: 1fr; gap: 20px; width: min(760px, calc(100% - 36px)); margin-top: 26px; }
   .contribute-intro { position: static; padding: 0 4px; }
@@ -99,4 +118,5 @@
   .contribute-sheet .form-grid { grid-template-columns: 1fr; }
   .contribute-sheet .form-wide { grid-column: auto; }
   .contribute-sheet .contribute-form-actions { flex-wrap: wrap; }
+  .markdown-toolbar button { padding-inline: 7px; }
 }

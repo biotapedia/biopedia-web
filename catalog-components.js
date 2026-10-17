@@ -1,4 +1,4 @@
-import { renderMarkdown } from './markdown.js';
+import { renderMarkdown } from './markdown.js?v=20261017-5';
 import { rankLabel, safeHttps } from './taxonomy.js';
 
 export function makeText(tag, className, text) {

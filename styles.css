@@ -107,9 +107,15 @@ a { color: inherit; }
 .detail-latin { margin: 0 0 25px; color: #769082; font-size: 16px; }
 .prose { max-width: 700px; color: #435d4e; font-size: 13px; line-height: 1.9; }
 .prose p { margin: 0 0 14px; }.prose p:last-child { margin-bottom: 0; }
-.prose h3, .prose h4, .prose h5 { color: var(--ink); font-family: 'Songti SC', 'STSong', serif; }
+.prose h1, .prose h2, .prose h3 { color: var(--ink); font-family: 'Songti SC', 'STSong', serif; }
 .prose a, .source-link { color: #296347; text-underline-offset: 3px; }
-.prose ul { padding-left: 20px; }
+.prose ul, .prose ol { padding-left: 20px; }
+.prose img { display: block; max-width: 100%; height: auto; margin: 14px 0 7px; border-radius: 11px; }
+.prose blockquote { margin: 16px 0; padding: 8px 15px; border-left: 3px solid #a4c8a9; color: #59715e; background: #f3f8f0; }
+.prose code { padding: 2px 5px; border-radius: 4px; background: #e9f0e7; font-size: .94em; }
+.prose pre { overflow-x: auto; padding: 13px; border-radius: 7px; background: #e9f0e7; }
+.prose pre code { padding: 0; }
+.prose hr { border: 0; border-top: 1px solid #d8e6d9; }
 .source-link { display: inline-block; margin-top: 19px; font-size: 12px; font-weight: 700; }
 .detail-visual { position: relative; min-height: 260px; display: grid; place-items: center; overflow: hidden; background: radial-gradient(circle at 45% 42%, #a6c8a8, #547967 80%); }
 .detail-visual::before { content: ''; position: absolute; inset: 20px; border: 1px solid rgba(255,255,255,.3); border-radius: 50%; }
