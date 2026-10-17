@@ -145,6 +145,18 @@ a { color: inherit; }
 .dialog-head h2 { margin: 7px 0 0; font-family: 'Songti SC', 'STSong', serif; font-size: 29px; }
 .close-button { width: 32px; height: 32px; border: 0; border-radius: 50%; background: #e9eee6; color: #385e48; font-size: 23px; line-height: 1; }
 .dialog-intro { margin: 17px 0 24px; color: #6a7d70; font-size: 12px; line-height: 1.8; }
+.parent-picker { margin-bottom: 22px; padding: 17px; border: 1px solid #d6e3d3; border-radius: 5px; background: #f0f5ec; }
+.picker-heading, .picker-row { display: flex; align-items: center; gap: 9px; }
+.picker-heading { justify-content: space-between; color: #31543c; font-size: 13px; }
+.picker-heading button, #parent-undo { border: 0; padding: 0; background: none; color: #276044; font-size: 11px; text-decoration: underline; }
+.picker-path { margin: 13px 0 7px; color: #53705a; font-size: 12px; line-height: 1.8; overflow-wrap: anywhere; }
+.picker-root { font-weight: 700; }.picker-new { color: #a05b22; font-weight: 700; }
+.picker-status { min-height: 18px; margin: 0 0 10px; color: #708270; font-size: 11px; }
+.picker-row { flex-wrap: wrap; }.picker-row select { flex: 1 1 240px; min-width: 0; padding: 9px; border: 1px solid #d7e1d6; border-radius: 4px; background: #fff; }
+.picker-row button { padding: 9px 11px; border: 1px solid #b7cdb8; border-radius: 4px; background: #e5eee2; color: #31583d; font-size: 11px; }
+.new-parent-form { margin: 15px 0 0; padding: 14px; border: 1px dashed #bfd3bd; border-radius: 4px; }.new-parent-form legend { padding: 0 5px; color: #45634a; font-size: 12px; font-weight: 700; }
+.new-parent-form .form-grid { gap: 10px; }.new-parent-form button { margin-top: 12px; }
+#parent-undo { margin-top: 12px; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 17px; }
 .form-field { display: grid; align-content: start; gap: 7px; color: #3b5845; font-size: 12px; font-weight: 700; }
 .form-field small { color: #849388; font-size: 10px; font-weight: 400; }

@@ -248,16 +248,113 @@ $('#directory-filter').addEventListener('input', applyFilter);
 window.addEventListener('hashchange', route);
 
 const dialog = $('#contribute-dialog');
-function openContribution() {
-  $('#form-parent-label').value = currentTaxon ? `${currentTaxon.name_zh} · ${rankLabel(currentTaxon.rank)}` : '图鉴根目录';
-  const suggested = currentTaxon ? nextRank[currentTaxon.rank] : 'kingdom';
-  $('[name="rank"]').value = suggested || 'unranked';
+let parentPath = [];
+let parentPage = null;
+let pickerSequence = 0;
+const parentRank = $('#new-parent-rank');
+parentRank.replaceChildren(...Array.from($('[name="rank"]').options, option => option.cloneNode(true)));
+
+function pickerParent() { return parentPath.at(-1) || null; }
+function pickerLabel(node) { return `${node.name_zh} · ${rankLabel(node.rank)}${node.pending ? '（本次新增）' : ''}`; }
+function updatePickerPath() {
+  const path = $('#parent-path');
+  path.replaceChildren(makeText('span', 'picker-root', '根目录'));
+  for (const node of parentPath) path.append(makeText('span', node.pending ? 'picker-new' : '', ` → ${pickerLabel(node)}`));
+  $('#form-parent-label').value = pickerParent() ? pickerLabel(pickerParent()) : '图鉴根目录';
+  $('#parent-undo').hidden = parentPath.length === 0;
   $('#draft-panel').hidden = true;
+  const suggested = pickerParent() ? nextRank[pickerParent().rank] : 'kingdom';
+  $('[name="rank"]').value = suggested || 'unranked';
+  parentRank.value = suggested || 'unranked';
+}
+
+async function loadPickerPage(page = 1) {
+  const sequence = pickerSequence;
+  const parent = pickerParent();
+  if (parent?.pending) {
+    $('#existing-picker').hidden = true;
+    $('#parent-status').textContent = '新建分类下还没有已有条目，可继续添加缺失层级。';
+    return;
+  }
+  $('#existing-picker').hidden = false;
+  $('#parent-select').disabled = true;
+  $('#parent-more').hidden = true;
+  $('#parent-status').textContent = '正在读取下级分类…';
+  try {
+    const data = await fetchData(parent ? `children/${parent.id}/${page}.json` : 'roots.json');
+    if (sequence !== pickerSequence || !dialog.open) return;
+    const choice = $('#parent-choice');
+    if (page === 1) choice.replaceChildren();
+    for (const item of data.items) {
+      const option = document.createElement('option');
+      option.value = item.id;
+      option.textContent = `${item.name_zh} · ${rankLabel(item.rank)} · ${item.scientific_name}`;
+      option.dataset.rank = item.rank;
+      option.dataset.name = item.name_zh;
+      choice.append(option);
+    }
+    parentPage = data.next ?? null;
+    $('#parent-more').hidden = parentPage === null;
+    $('#parent-select').disabled = choice.options.length === 0;
+    $('#parent-status').textContent = choice.options.length ? '选择已有分类继续向下，或添加尚不存在的分类。' : '这里尚无下级分类，可以添加新的上级分类。';
+  } catch (error) {
+    if (sequence === pickerSequence) $('#parent-status').textContent = `读取分类失败：${error.message}`;
+  }
+}
+
+function refreshPicker() {
+  pickerSequence++;
+  updatePickerPath();
+  loadPickerPage();
+}
+
+async function openContribution() {
   dialog.showModal();
+  parentPath = [];
+  refreshPicker();
+  if (currentTaxon) {
+    const sequence = pickerSequence;
+    try {
+      const path = await ancestorPath(currentTaxon);
+      if (!dialog.open || sequence !== pickerSequence) return;
+      parentPath = path;
+      refreshPicker();
+    } catch (error) {
+      $('#parent-status').textContent = `无法预选当前分类：${error.message}`;
+    }
+  }
+  $('#draft-panel').hidden = true;
 }
 document.querySelectorAll('[data-open-contribute]').forEach(button => button.addEventListener('click', openContribution));
 $('#close-dialog').addEventListener('click', () => dialog.close());
 dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
+$('#parent-reset').addEventListener('click', () => { parentPath = []; refreshPicker(); });
+$('#parent-undo').addEventListener('click', () => { parentPath.pop(); refreshPicker(); });
+$('#parent-more').addEventListener('click', () => { if (parentPage !== null) loadPickerPage(parentPage); });
+$('#parent-select').addEventListener('click', () => {
+  const selected = $('#parent-choice').selectedOptions[0];
+  if (!selected) return;
+  parentPath.push({ id: selected.value, name_zh: selected.dataset.name, rank: selected.dataset.rank, pending: false });
+  refreshPicker();
+});
+$('#parent-add').addEventListener('click', () => {
+  if (parentPath.filter(node => node.pending).length >= 8) {
+    $('#parent-status').textContent = '一次投稿最多补充 8 个缺失层级。';
+    return;
+  }
+  const name = $('#new-parent-name').value.trim();
+  const scientific = $('#new-parent-scientific').value.trim();
+  const description = $('#new-parent-description').value.trim();
+  if (!name || !scientific || description.length < 20) {
+    $('#parent-status').textContent = '新分类需要中文名、学名和至少 20 字的简介。';
+    return;
+  }
+  parentPath.push({ pending: true, rank: parentRank.value, name_zh: name, scientific_name: scientific, description });
+  $('#new-parent-name').value = '';
+  $('#new-parent-scientific').value = '';
+  $('#new-parent-description').value = '';
+  refreshPicker();
+});
 
 function encodePayload(payload) {
   const bytes = new TextEncoder().encode(JSON.stringify(payload));
@@ -270,8 +367,10 @@ function prepareDraft() {
   const form = $('#contribute-form');
   if (!form.reportValidity()) return null;
   const data = Object.fromEntries(new FormData(form).entries());
+  const ancestors = parentPath.filter(node => node.pending).map(({ rank, name_zh, scientific_name, description }) => ({ rank, name_zh, scientific_name, description }));
   const payload = {
-    parent_id: currentTaxon?.id ?? null,
+    parent_id: [...parentPath].reverse().find(node => !node.pending)?.id ?? null,
+    ancestors,
     rank: data.rank,
     name_zh: data.name_zh.trim(),
     scientific_name: data.scientific_name.trim(),
@@ -294,7 +393,8 @@ function prepareDraft() {
     '## 新分类投稿',
     `- 中文名：${payload.name_zh}`,
     `- 学名：${payload.scientific_name}`,
-    `- 上级分类：${payload.parent_id || '根目录'}`,
+    `- 上级分类路径：${parentPath.length ? parentPath.map(pickerLabel).join(' → ') : '根目录'}`,
+    ...ancestors.map(node => `- 同时新增：${node.name_zh}（${node.scientific_name}，${rankLabel(node.rank)}）`),
     `- 分类级别：${rankLabel(payload.rank)}`,
     payload.image_url ? `- 图片：${payload.image_url}` : '',
     payload.image_credit ? `- 图片作者及授权：${payload.image_credit}` : '',
@@ -302,6 +402,11 @@ function prepareDraft() {
     '', '### 介绍', payload.description, '',
     `<!-- BIOTA_SUBMISSION_V1\n${encodePayload(payload)}\n-->`
   ].filter(Boolean).join('\n');
+  if (new TextEncoder().encode(JSON.stringify(payload)).length > 20000 || body.length > 50000) {
+    $('#draft-panel').hidden = false;
+    $('#draft-message').textContent = '投稿内容过长，请缩短介绍或分多次投稿。';
+    return null;
+  }
   return { payload, body };
 }
 

@@ -89,15 +89,32 @@
           <div><span class="section-kicker">CONTRIBUTE / 社区投稿</span><h2>添加一个分类</h2></div>
           <button id="close-dialog" class="close-button" type="button" aria-label="关闭投稿表单">×</button>
         </div>
-        <p class="dialog-intro">填写资料后，我们会为你准备 GitHub 投稿页面；管理员将通过 Pull Request 审核内容。</p>
+        <p class="dialog-intro">先选择已有上级分类；缺少中间层级时，可在这里补齐。所有新条目将进入同一个 Pull Request 审核。</p>
+        <section class="parent-picker" aria-label="选择上级分类">
+          <div class="picker-heading"><strong>上级分类路径</strong><button id="parent-reset" type="button">从根目录重新选择</button></div>
+          <div id="parent-path" class="picker-path"></div>
+          <p id="parent-status" class="picker-status" role="status"></p>
+          <div id="existing-picker" class="picker-row"><select id="parent-choice" aria-label="选择已有的下级分类"></select><button id="parent-select" type="button">进入所选分类</button><button id="parent-more" type="button" hidden>加载更多</button></div>
+          <fieldset id="new-parent-form" class="new-parent-form"><legend>缺少下一层？创建上级分类</legend>
+            <div class="form-grid">
+              <label class="form-field"><span>分类级别</span><select id="new-parent-rank"></select></label>
+              <label class="form-field"><span>中文名</span><input id="new-parent-name" maxlength="120" placeholder="例如：鹅膏属"></label>
+              <label class="form-field"><span>学名</span><input id="new-parent-scientific" maxlength="160" placeholder="例如：Amanita"></label>
+              <label class="form-field form-wide"><span>简介</span><textarea id="new-parent-description" minlength="20" maxlength="10000" rows="2" placeholder="请描述这一上级分类，至少 20 字。"></textarea></label>
+            </div>
+            <button id="parent-add" class="secondary-button" type="button">添加到本次投稿路径</button>
+          </fieldset>
+          <button id="parent-undo" type="button" hidden>撤销上一步</button>
+        </section>
         <div class="form-grid">
-          <label class="form-field"><span>上级分类</span><input id="form-parent-label" type="text" readonly><small>由当前浏览位置自动确定</small></label>
+          <label class="form-field"><span>所选上级分类</span><input id="form-parent-label" type="text" readonly><small>可在上方切换，或添加缺失层级</small></label>
           <label class="form-field"><span>分类级别 *</span><select name="rank" required>
-            <option value="kingdom">界</option><option value="phylum">门</option><option value="class">纲</option>
-            <option value="order">目</option><option value="suborder">亚目</option><option value="family">科</option>
-            <option value="subfamily">亚科</option><option value="tribe">族</option><option value="genus">属</option>
-            <option value="species">种</option><option value="subspecies">亚种</option><option value="clade">演化支</option>
-            <option value="unranked">未定级</option>
+            <option value="domain">域</option><option value="kingdom">界</option><option value="subkingdom">亚界</option>
+            <option value="phylum">门</option><option value="subphylum">亚门</option><option value="class">纲</option><option value="subclass">亚纲</option>
+            <option value="order">目</option><option value="suborder">亚目</option><option value="family">科</option><option value="subfamily">亚科</option>
+            <option value="tribe">族</option><option value="genus">属</option><option value="subgenus">亚属</option>
+            <option value="species">种</option><option value="subspecies">亚种</option><option value="variety">变种</option><option value="form">变型</option>
+            <option value="clade">演化支</option><option value="unranked">未定级</option>
           </select></label>
           <label class="form-field"><span>中文名 *</span><input name="name_zh" maxlength="120" required placeholder="例如：狮"></label>
           <label class="form-field"><span>学名 *</span><input name="scientific_name" maxlength="160" required placeholder="例如：Panthera leo"></label>
