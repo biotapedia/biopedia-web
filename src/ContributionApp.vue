@@ -6,7 +6,6 @@ import { markdownImageUrls } from '../markdown.js';
 import { nextRank, rankLabel, rankNames, safeHttps } from '../taxonomy.js';
 
 const formRef = ref(null);
-const pickerSelect = ref(null);
 const parentPath = ref([]);
 const choices = ref([]);
 const choice = ref('');
@@ -14,6 +13,14 @@ const parentPage = ref(null);
 const pickerStatus = ref('');
 const pickerLoading = ref(false);
 const pickerVersion = ref(0);
+const editingIndex = ref(null);
+const editSelect = ref(null);
+const editChoices = ref([]);
+const editPage = ref(null);
+const editValue = ref('');
+const editLoading = ref(false);
+const editStatus = ref('');
+const editVersion = ref(0);
 const newParent = reactive({ rank: 'kingdom', name_zh: '', scientific_name: '', description: '' });
 const form = reactive({ rank: 'kingdom', name_zh: '', scientific_name: '', description: '', image_url: '', image_credit: '', source_url: '' });
 const rankOptions = Object.entries(rankNames);
@@ -24,6 +31,7 @@ const draftMessage = ref('');
 const draftLink = ref('');
 const backHref = ref('./#/');
 let pickerSequence = 0;
+let editSequence = 0;
 
 const pickerParent = computed(() => parentPath.value.at(-1) || null);
 const parentLabel = computed(() => pickerParent.value ? pickerLabel(pickerParent.value) : '图鉴根目录');
@@ -62,6 +70,7 @@ async function loadPickerPage(page = 1) {
   }
 }
 function refreshPicker() {
+  cancelEdit();
   pickerSequence++;
   pickerVersion.value++;
   draftVisible.value = false;
@@ -70,14 +79,64 @@ function refreshPicker() {
   newParent.rank = suggested || 'unranked';
   return loadPickerPage();
 }
+function setEditSelect(element) { editSelect.value = element; }
+function cancelEdit() {
+  editSequence++;
+  editingIndex.value = null;
+  editLoading.value = false;
+  editStatus.value = '';
+}
+async function loadEditPage(page = 1) {
+  const sequence = editSequence;
+  const parent = parentPath.value[editingIndex.value - 1];
+  if (parent?.pending) {
+    editPage.value = null;
+    return;
+  }
+  editLoading.value = true;
+  try {
+    const data = await fetchData(parent ? `children/${parent.id}/${page}.json` : 'roots.json');
+    if (sequence !== editSequence) return;
+    const byId = new Map([...editChoices.value, ...data.items].map(item => [item.id, item]));
+    editChoices.value = [...byId.values()];
+    editPage.value = data.next ?? null;
+    editStatus.value = '';
+  } catch (cause) {
+    if (sequence === editSequence) editStatus.value = `读取同级分类失败：${cause.message}`;
+  } finally {
+    if (sequence === editSequence) editLoading.value = false;
+  }
+}
 async function editPath(index) {
-  if (index < parentPath.value.length) {
+  if (editingIndex.value === index) { cancelEdit(); return; }
+  editSequence++;
+  editingIndex.value = index;
+  const current = parentPath.value[index];
+  editChoices.value = current.pending ? [] : [current];
+  editValue.value = current.id ?? '__current__';
+  editPage.value = null;
+  editStatus.value = '';
+  editVersion.value++;
+  await loadEditPage();
+  if (editingIndex.value !== index) return;
+  await nextTick();
+  editSelect.value?.focus();
+  editSelect.value?.show();
+}
+async function selectEdited(value) {
+  const index = editingIndex.value;
+  if (index === null || !value) return;
+  if (value === editValue.value) { cancelEdit(); return; }
+  if (value === '__new__') {
     parentPath.value = parentPath.value.slice(0, index);
     await refreshPicker();
+    choice.value = '__new__';
+    return;
   }
-  await nextTick();
-  pickerSelect.value?.focus();
-  pickerSelect.value?.show();
+  const selected = editChoices.value.find(item => item.id === value);
+  if (!selected) return;
+  parentPath.value = [...parentPath.value.slice(0, index), { id: selected.id, name_zh: selected.name_zh, rank: selected.rank, pending: false }];
+  refreshPicker();
 }
 function selectChoice(value) {
   choice.value = value;
@@ -218,17 +277,37 @@ onMounted(async () => {
             <strong>上级分类路径</strong>
             <span class="picker-help">点击路径中的分类可重选</span>
           </div>
-          <nav class="picker-path" aria-label="已选择的上级分类路径">
-            <button class="picker-path-node picker-root" type="button" aria-label="从根目录重新选择分类" @click="editPath(0)">根目录 <span aria-hidden="true">⌄</span></button>
+          <nav class="picker-path" :class="{ 'is-editing': editingIndex !== null }" aria-label="已选择的上级分类路径">
+            <span class="picker-path-node picker-root">根目录</span>
             <template v-for="(node, index) in parentPath" :key="index">
               <span class="picker-separator" aria-hidden="true">→</span>
-              <button class="picker-path-node" :class="{ 'picker-new': node.pending }" type="button" :aria-label="`更改${pickerLabel(node)}，并清除其下级分类`" @click="editPath(index)">{{ pickerLabel(node) }} <span aria-hidden="true">⌄</span></button>
+              <div class="picker-path-step">
+                <button class="picker-path-node" :class="{ 'picker-new': node.pending }" type="button" :aria-label="`更改${pickerLabel(node)}`" :aria-expanded="editingIndex === index" :aria-controls="`picker-edit-${index}`" @click="editPath(index)">{{ pickerLabel(node) }} <span aria-hidden="true">⌄</span></button>
+                <div v-if="editingIndex === index" :id="`picker-edit-${index}`" class="picker-inline-editor">
+                  <wa-select
+                    :ref="setEditSelect"
+                    :key="editVersion"
+                    :label="`重新选择${rankLabel(node.rank)}`"
+                    :value.prop="editValue"
+                    :disabled="editLoading"
+                    @change="selectEdited($event.target.value)"
+                  >
+                    <wa-option v-if="node.pending" value="__current__">{{ pickerLabel(node) }}</wa-option>
+                    <wa-option v-for="item in editChoices" :key="item.id" :value="item.id">{{ item.name_zh }} · {{ rankLabel(item.rank) }} · {{ item.scientific_name }}</wa-option>
+                    <wa-option value="__new__">没有合适的分类，重新新增…</wa-option>
+                  </wa-select>
+                  <p v-if="editStatus" class="picker-edit-status" role="status">{{ editStatus }}</p>
+                  <div class="picker-edit-actions">
+                    <wa-button v-if="editPage !== null" appearance="outlined" variant="brand" size="s" type="button" :disabled="editLoading" @click="loadEditPage(editPage)">加载更多</wa-button>
+                    <wa-button appearance="plain" size="s" type="button" @click="cancelEdit">取消</wa-button>
+                  </div>
+                </div>
+              </div>
             </template>
           </nav>
           <p class="picker-status" role="status">{{ pickerStatus }}</p>
           <div class="picker-row">
             <wa-select
-              ref="pickerSelect"
               :key="pickerVersion"
               label="选择已有的下级分类或新增分类"
               placeholder="选择分类后自动进入…"

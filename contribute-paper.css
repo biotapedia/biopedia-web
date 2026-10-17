@@ -40,6 +40,8 @@
   gap: 6px;
   color: #5b6b58;
 }
+.picker-path.is-editing { padding-bottom: 132px; }
+.picker-path-step { position: relative; display: inline-flex; flex-direction: column; align-items: flex-start; max-width: 100%; }
 .picker-path-node {
   display: inline-flex;
   align-items: center;
@@ -54,11 +56,37 @@
   line-height: 1.4;
   text-align: left;
 }
-.picker-path-node:hover { border-color: #75886b; background: #e8e9d8; }
+.picker-path button.picker-path-node:hover, .picker-path-node[aria-expanded="true"] { border-color: #75886b; background: #e8e9d8; }
 .picker-path-node span { color: #8b917a; font-size: 15px; line-height: 1; }
 .picker-path-node.picker-new { border-style: dashed; color: #855d34; }
 .picker-separator { color: #7e8c73; font-size: 13px; }
+.picker-inline-editor {
+  position: absolute;
+  z-index: 5;
+  top: 100%;
+  left: 0;
+  width: min(320px, calc(100vw - 96px));
+  margin-top: 7px;
+  padding: 11px;
+  border: 1px solid #b8b69d;
+  background: #f9f6e9;
+  box-shadow: 2px 3px 0 rgba(83, 73, 51, .13);
+}
+.picker-inline-editor wa-select { display: block; width: 100%; }
+.picker-edit-status { margin: 8px 0 0; color: #8d4c3f; font-size: 11px; }
+.picker-edit-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 7px; margin-top: 8px; }
+.picker-edit-actions wa-button::part(button) { min-height: 26px; padding: 3px 7px; font-size: 11px; }
 .picker-status { color: #72796b; }
+@media (max-width: 670px) {
+  .picker-path { align-items: flex-start; }
+  .picker-path.is-editing { padding-bottom: 0; }
+  .picker-inline-editor {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: min(280px, calc(100vw - 70px));
+  }
+}
 .new-parent-form { border-color: #b6bda1; border-radius: 0; background: #f8f5ea; }
 .new-parent-form legend { color: #4e694e; }
 .contribute-sheet :is(wa-input, wa-select, wa-textarea)::part(form-control-label),
