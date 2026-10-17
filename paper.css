@@ -186,6 +186,43 @@ a:focus-visible, button:focus-visible, wa-button:focus-visible, .taxon-link:focu
 .visual-label { color: #fffdf0; }
 .footer { border-top: 1px solid #c9bea6; color: #777468; }
 
+/* Distribution map: an atlas plate under the taxon article. */
+.distribution { margin: -18px 0 42px; padding: 22px 24px 20px; border: 1px solid #bfc3a9; background: #f7f4e8; }
+.distribution-head { margin-bottom: 14px; }
+.distribution-head h3 { margin: 4px 0 0; font-family: Georgia, 'Songti SC', serif; font-size: 22px; color: var(--deep); }
+.distribution-modes { position: absolute; top: 0; right: 0; z-index: 1; display: inline-flex; border: 1px solid #b8af99; background: #f7f4e8; }
+.distribution-modes button { padding: 6px 13px; border: 0; background: transparent; color: #5d6a59; font: inherit; font-size: 12px; cursor: pointer; }
+.distribution-modes button + button { border-left: 1px solid #b8af99; }
+.distribution-modes button[aria-pressed="true"] { background: #45664e; color: #fbf8ef; }
+.distribution-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(170px, 230px); gap: 22px; align-items: start; }
+.distribution-map { position: relative; margin: 0; }
+.distribution-map svg { display: block; width: 100%; max-height: 460px; cursor: grab; touch-action: none; user-select: none; }
+.distribution-map svg:active { cursor: grabbing; }
+.distribution-map svg:focus-visible { outline: 2px solid #8f7240; outline-offset: 4px; }
+.distribution-map figcaption { margin-top: 10px; color: #8a8571; font-size: 11px; text-align: center; }
+.distribution-status { display: grid; place-items: center; min-height: 260px; margin: 0; color: var(--muted); font-size: 13px; }
+.map-sphere { fill: #e3dcc6; }
+.map-graticule { fill: none; stroke: rgba(98, 86, 58, .16); stroke-width: .6; }
+.map-sea-selected { fill: #9fb8b0; fill-opacity: .75; }
+.map-land { fill: #fbf8ef; }
+.map-land-selected { fill: #6f8c63; stroke: #3f5c45; stroke-width: .8; stroke-linejoin: round; }
+.map-borders { fill: none; stroke: #b3a98d; stroke-width: .5; stroke-linejoin: round; }
+.map-marker { fill: #45664e; stroke: #fbf8ef; stroke-width: 1.5; }
+.map-hits path { fill: transparent; cursor: pointer; }
+.map-hits path:hover { fill: rgba(69, 102, 78, .22); }
+.distribution-map-interactive .map-marker { cursor: pointer; }
+.map-outline { fill: none; stroke: #8a7f62; stroke-width: 1.2; }
+.distribution-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; font-size: 13px; color: var(--ink); }
+.distribution-list li { display: flex; gap: 9px; align-items: baseline; padding-bottom: 8px; border-bottom: 1px dotted #c9c0a9; }
+.distribution-list small { display: block; color: #8a8571; font-size: 11px; }
+.distribution-swatch { flex: none; width: 10px; height: 10px; border: 1px solid #3f5c45; background: #6f8c63; }
+.distribution-sea .distribution-swatch { border-color: #5f7d75; background: #9fb8b0; }
+
+@media (max-width: 860px) {
+  .distribution-body { grid-template-columns: 1fr; }
+  .distribution-list { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+}
+
 @media (max-width: 670px) {
   .hero, .sidebar, .catalog-content, .contribute-sheet { border-radius: 0; }
   .hero-copy { padding-left: 0; }

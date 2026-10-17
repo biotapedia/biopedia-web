@@ -1,8 +1,11 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, defineAsyncComponent, onMounted, onUnmounted, ref } from 'vue';
 import { fetchData, fetchTaxon, ancestorPath } from '../catalog-api.js';
 import { rankLabel, safeHttps } from '../taxonomy.js';
 import { renderMarkdown } from '../markdown.js';
+import { regionIndex, regionPath } from './regions.js';
+
+const DistributionMap = defineAsyncComponent(() => import('./DistributionMap.vue'));
 
 const taxon = ref(null);
 const path = ref([]);
@@ -15,6 +18,7 @@ const loadingMore = ref(false);
 const total = ref(0);
 let renderSequence = 0;
 
+const distribution = computed(() => Array.isArray(taxon.value?.distribution) ? taxon.value.distribution.filter(id => regionIndex.has(id)) : []);
 const contributionHref = computed(() => `./contribute.html${taxon.value ? `?parent=${encodeURIComponent(taxon.value.id)}` : ''}`);
 const visibleItems = computed(() => items.value.filter(item => `${item.name_zh} ${item.scientific_name}`.toLocaleLowerCase().includes(filter.value.trim().toLocaleLowerCase())));
 const emptyMessage = computed(() => {
@@ -120,6 +124,15 @@ onUnmounted(() => { window.removeEventListener('hashchange', route); });
           <div class="detail-copy"><div class="detail-rank"><span class="detail-rank-badge">{{ rankLabel(taxon.rank) }}</span><span>{{ taxon.id }}</span></div><h2 class="detail-title">{{ taxon.name_zh }}</h2><p class="detail-latin">{{ taxon.scientific_name }}</p><div v-markdown="taxon.body" class="prose"></div><a v-if="safeHttps(taxon.source_url)" class="source-link" :href="safeHttps(taxon.source_url)" target="_blank" rel="noopener noreferrer">查看资料来源 ↗</a></div>
           <div class="detail-visual"><img v-if="safeHttps(taxon.image_url)" :src="safeHttps(taxon.image_url)" :alt="taxon.name_zh" loading="lazy" referrerpolicy="no-referrer" @error="$event.target.remove()"><span class="visual-glyph">✳</span><span class="visual-label">{{ taxon.image_credit || '生命之树 / BIOTAPEDIA' }}</span></div>
         </article>
+        <section v-if="distribution.length" class="distribution" aria-labelledby="distribution-title">
+          <div class="distribution-head"><p class="section-kicker">RANGE / 分布</p><h3 id="distribution-title">分布地区</h3></div>
+          <div class="distribution-body">
+            <DistributionMap :key="taxon.id" :regions="distribution" />
+            <ul class="distribution-list">
+              <li v-for="region in distribution.map(regionPath)" :key="region.at(-1).id" :class="`distribution-${region[0].kind}`"><span class="distribution-swatch" aria-hidden="true"></span><span><small v-if="region.length > 1">{{ region[0].name }}</small>{{ region.at(-1).name }}</span></li>
+            </ul>
+          </div>
+        </section>
       </div>
       <div class="directory-heading"><div><p class="section-kicker">{{ taxon ? 'CONTINUE / 继续探索' : 'DISCOVER / 从这里开始' }}</p><h2>{{ error ? '连接失败' : taxon ? (total ? `${taxon.name_zh}的下级分类` : '目录尽头') : '探索生命的主要类群' }}</h2></div><label class="filter-field"><span class="sr-only">筛选当前目录</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3"></circle><path d="m16 16 4.3 4.3"></path></svg><input v-model="filter" type="search" placeholder="筛选当前目录…" autocomplete="off"></label></div>
       <div class="card-grid">

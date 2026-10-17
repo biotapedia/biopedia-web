@@ -48,6 +48,10 @@
 .picker-status { color: #72796b; }
 .new-parent-form { border-color: #b6bda1; border-radius: 0; background: #f8f5ea; }
 .new-parent-form legend { color: #4e694e; }
+.region-picker { border-color: #bfc2a6; background: #f8f5ea; }
+.region-picker wa-tree { --wa-color-neutral-fill-quiet: #ece6d1; }
+.region-picker legend { color: #3b543f; }
+.region-picker wa-tag::part(base) { border-color: #a5a28e; border-radius: 0; background: #fdfaf1; color: #3b5840; }
 .contribute-sheet :is(wa-input, wa-select, wa-textarea)::part(form-control-label),
 .markdown-field > label { color: #3b543f; }
 .contribute-sheet :is(wa-input, wa-select, wa-textarea)::part(hint) { color: #77796d; }

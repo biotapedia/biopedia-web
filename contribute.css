@@ -101,6 +101,14 @@
 .editor-insert-actions { display: flex; justify-content: flex-end; gap: 8px; }
 .editor-insert-actions wa-button::part(button) { border-radius: 8px; font-size: 12px; font-weight: 700; }
 
+.region-picker { min-width: 0; margin: 0; padding: 16px 18px 18px; border: 1px solid #d0e0d3; }
+.region-picker legend { padding: 0 6px; color: #3b5845; font-size: 12px; font-weight: 700; }
+.region-picker-body { display: grid; grid-template-columns: minmax(180px, 230px) minmax(0, 1fr); gap: 18px; align-items: start; }
+.region-trees { display: grid; gap: 14px; max-height: 430px; overflow-y: auto; padding-right: 4px; }
+.region-group-label { display: block; margin-bottom: 4px; color: #776f55; font-size: 11px; letter-spacing: .1em; }
+.region-picker wa-tree { --indent-size: 12px; font-size: 13px; }
+.region-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+
 @media (max-width: 900px) {
   .contribute-layout { grid-template-columns: 1fr; gap: 20px; width: min(760px, calc(100% - 36px)); margin-top: 26px; }
   .contribute-intro { position: static; padding: 0 4px; }
@@ -116,5 +124,8 @@
   .contribute-sheet .form-grid { grid-template-columns: 1fr; }
   .contribute-sheet .form-wide { grid-column: auto; }
   .contribute-sheet .contribute-form-actions { flex-wrap: wrap; }
+  .region-picker { padding: 14px; }
+  .region-picker-body { grid-template-columns: 1fr; }
+  .region-trees { max-height: 260px; }
   .markdown-toolbar .toolbar-divider { display: none; }
 }

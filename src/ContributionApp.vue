@@ -1,9 +1,12 @@
 <script setup>
-import { computed, nextTick, onMounted, reactive, ref } from 'vue';
+import { computed, defineAsyncComponent, nextTick, onMounted, reactive, ref } from 'vue';
 import MarkdownEditor from './MarkdownEditor.vue';
 import { fetchData, fetchTaxon, ancestorPath } from '../catalog-api.js';
 import { markdownImageUrls } from '../markdown.js';
 import { nextRank, rankLabel, rankNames, safeHttps } from '../taxonomy.js';
+import { normalizeRegions, regionIndex, regionLeaves, regionPath, regionTree, toggleRegionLeaf } from './regions.js';
+
+const DistributionMap = defineAsyncComponent(() => import('./DistributionMap.vue'));
 
 const formRef = ref(null);
 const parentPath = ref([]);
@@ -19,7 +22,7 @@ const editPage = ref(null);
 const editLoading = ref(false);
 const editStatus = ref('');
 const newParent = reactive({ rank: 'kingdom', name_zh: '', scientific_name: '', description: '' });
-const form = reactive({ rank: 'kingdom', name_zh: '', scientific_name: '', description: '', image_url: '', image_credit: '', source_url: '' });
+const form = reactive({ rank: 'kingdom', name_zh: '', scientific_name: '', description: '', image_url: '', image_credit: '', source_url: '', distribution: [] });
 const rankOptions = Object.entries(rankNames);
 const repositoryUrl = ref('');
 const draftVisible = ref(false);
@@ -32,6 +35,22 @@ let editSequence = 0;
 
 const pickerParent = computed(() => parentPath.value.at(-1) || null);
 const parentLabel = computed(() => pickerParent.value ? pickerLabel(pickerParent.value) : '图鉴根目录');
+const regionGroups = [['land', '陆地'], ['sea', '海洋']].map(([kind, label]) => ({ kind, label, nodes: regionTree.filter(node => node.kind === kind) }));
+// Checkbox state for every tree item, derived from the selected leaves so the tree and the map stay in step.
+const regionStates = computed(() => {
+  const selected = new Set(form.distribution.flatMap(id => regionLeaves(id)).map(node => node.id));
+  return new Map([...regionIndex.values()].map(node => {
+    const leaves = regionLeaves(node.id);
+    const count = leaves.filter(leaf => selected.has(leaf.id)).length;
+    return [node.id, { selected: count === leaves.length, indeterminate: count > 0 && count < leaves.length }];
+  }));
+});
+function regionLabel(id) { return regionPath(id).map(node => node.name).join(' · '); }
+function selectRegions(kind, items) {
+  const kept = form.distribution.filter(id => regionIndex.get(id).kind !== kind);
+  const leaves = items.map(item => item.dataset.region).filter(id => regionIndex.get(id)?.children.length === 0);
+  form.distribution = normalizeRegions([...kept, ...leaves]);
+}
 function pickerLabel(node) { return `${node.name_zh} · ${rankLabel(node.rank)}${node.pending ? '（本次新增）' : ''}`; }
 function levelWidth(node) { return `${Math.min(250, Math.max(104, [...pickerLabel(node)].length * 13 + 38))}px`; }
 
@@ -176,7 +195,8 @@ function prepareDraft() {
     description: form.description.trim(),
     image_url: form.image_url.trim(),
     image_credit: form.image_credit.trim(),
-    source_url: form.source_url.trim()
+    source_url: form.source_url.trim(),
+    ...(form.distribution.length ? { distribution: form.distribution } : {})
   };
   if (payload.description.length < 20 || payload.description.length > 10000) return draftError('介绍与特征需要 20 到 10000 字。');
   if (payload.image_url && !payload.image_credit) return draftError('填写图片链接时，请补充图片作者和授权。');
@@ -191,7 +211,8 @@ function prepareDraft() {
     `- 分类级别：${rankLabel(payload.rank)}`,
     payload.image_url ? `- 图片：${payload.image_url}` : '',
     payload.image_credit ? `- 图片作者及授权：${payload.image_credit}` : '',
-    payload.source_url ? `- 资料来源：${payload.source_url}` : ''
+    payload.source_url ? `- 资料来源：${payload.source_url}` : '',
+    form.distribution.length ? `- 分布地区：${form.distribution.map(regionLabel).join('、')}` : ''
   ].filter(Boolean);
   const body = [...summary, '', '### 介绍', '', payload.description, '', `<!-- BIOTA_SUBMISSION_V1\n${encodePayload(payload)}\n-->`].join('\n');
   if (new TextEncoder().encode(JSON.stringify(payload)).length > 20000 || body.length > 50000) return draftError('投稿内容过长，请缩短介绍或分多次投稿。');
@@ -339,6 +360,26 @@ onMounted(async () => {
           <div class="form-field form-wide"><wa-input label="封面图片外链（HTTPS）" name="image_url" type="url" :value.prop="form.image_url" placeholder="https://example.org/photo.jpg" @input="form.image_url = $event.target.value"></wa-input></div>
           <div class="form-field"><wa-input label="封面图片作者及授权" name="image_credit" maxlength="1000" :value.prop="form.image_credit" placeholder="填写封面图片时必填" @input="form.image_credit = $event.target.value"></wa-input></div>
           <div class="form-field"><wa-input label="资料来源（HTTPS）" name="source_url" type="url" :value.prop="form.source_url" placeholder="https://example.org/source" @input="form.source_url = $event.target.value"></wa-input></div>
+          <fieldset class="region-picker form-wide">
+            <legend>分布地区（可选）</legend>
+            <div class="region-picker-body">
+              <div class="region-trees">
+                <div v-for="group in regionGroups" :key="group.kind" class="region-group">
+                  <span class="region-group-label">{{ group.label }}</span>
+                  <wa-tree selection="multiple" :aria-label="`${group.label}分布地区`" @wa-selection-change="selectRegions(group.kind, $event.detail.selection)">
+                    <wa-tree-item v-for="node in group.nodes" :key="node.id" :data-region="node.id" :selected.prop="regionStates.get(node.id).selected" :indeterminate.prop="regionStates.get(node.id).indeterminate">
+                      {{ node.name }}
+                      <wa-tree-item v-for="child in node.children" :key="child.id" :data-region="child.id" :selected.prop="regionStates.get(child.id).selected">{{ child.name }}</wa-tree-item>
+                    </wa-tree-item>
+                  </wa-tree>
+                </div>
+              </div>
+              <DistributionMap :regions="form.distribution" interactive @toggle="form.distribution = toggleRegionLeaf(form.distribution, $event)" />
+            </div>
+            <div v-if="form.distribution.length" class="region-tags">
+              <wa-tag v-for="id in form.distribution" :key="id" size="small" appearance="outlined" with-remove @wa-remove="form.distribution = form.distribution.filter(item => item !== id)">{{ regionLabel(id) }}</wa-tag>
+            </div>
+          </fieldset>
         </div>
 
         <div v-if="draftVisible" class="draft-panel">

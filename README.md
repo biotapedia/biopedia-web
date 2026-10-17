@@ -28,3 +28,7 @@ npm run dev
 投稿表单可从任意页面逐级选择已有分类，并补充最多 8 个缺失的中间层级。新建的上级分类与目标条目会被编码进同一份 Issue，数据仓库在一个 Pull Request 中生成所有条目及索引。
 
 “介绍与特征”支持常用 Markdown 格式：标题、加粗、斜体、列表、引用、代码、HTTPS 链接和正文图片。编辑器提供格式按钮和预览；“插入图片”会收集 HTTPS 图片地址、替代文字及作者授权说明，再自动写入 Markdown。封面图片仍由独立的图片外链字段设置。正文图片由 `markdown.js` 安全渲染，不执行原始 HTML，也不加载非 HTTPS 图片。
+
+## 分布地图
+
+条目可在元数据中写入 `distribution: ["tdwg-36","fao-61"]`。编号可以是任意一级：陆地用 TDWG WGSRPD 的一、二级区，海洋用 FAO 主要渔区，层级与中文名定义在 `src/regions.js`。`src/assets/regions.topo.json` 只保存最细一级的边界，上级区域在浏览时用 `topojson.merge` 合成；运行 `scripts/build-regions.sh` 可从原始数据重新生成该文件。地图组件 `src/DistributionMap.vue` 仅在条目含分布信息或打开投稿页时按需加载。投稿页可在区域树中勾选，也可直接点击地图选择；选中某一级下的全部区域会自动合并为该级。`biota-data/scripts/regions.json` 保存同一套编号供数据校验，修改区域时需同步。
