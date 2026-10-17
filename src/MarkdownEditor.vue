@@ -84,20 +84,33 @@ function insertImage() {
     <label for="description-editor">介绍与特征 * <small>支持 Markdown，可使用下方按钮排版</small></label>
     <div class="markdown-editor">
       <div class="markdown-toolbar" role="toolbar" aria-label="介绍与特征格式工具">
-        <button type="button" title="标题" @click="prefixLines('## ')">标题</button>
-        <button type="button" title="小标题" @click="prefixLines('### ')">小标题</button>
-        <button type="button" title="加粗" @click="wrap('**', '加粗文字')"><strong>B</strong></button>
-        <button type="button" title="斜体" @click="wrap('*', '斜体文字')"><em>I</em></button>
-        <button type="button" title="无序列表" @click="prefixLines('- ')">• 列表</button>
-        <button type="button" title="有序列表" @click="prefixLines('1. ')">1. 列表</button>
-        <button type="button" :aria-expanded="panel === 'link'" aria-controls="markdown-link-panel" @click="openPanel('link')">插入链接</button>
-        <button type="button" :aria-expanded="panel === 'image'" aria-controls="markdown-image-panel" @click="openPanel('image')">插入图片</button>
-        <button type="button" :aria-pressed="previewOpen" aria-controls="markdown-preview" @click="previewOpen = !previewOpen">预览</button>
+        <wa-button appearance="plain" size="s" type="button" title="标题" @click="prefixLines('## ')">标题</wa-button>
+        <wa-button appearance="plain" size="s" type="button" title="小标题" @click="prefixLines('### ')">小标题</wa-button>
+        <wa-button appearance="plain" size="s" type="button" title="加粗" @click="wrap('**', '加粗文字')"><strong>B</strong></wa-button>
+        <wa-button appearance="plain" size="s" type="button" title="斜体" @click="wrap('*', '斜体文字')"><em>I</em></wa-button>
+        <wa-button appearance="plain" size="s" type="button" title="无序列表" @click="prefixLines('- ')">• 列表</wa-button>
+        <wa-button appearance="plain" size="s" type="button" title="有序列表" @click="prefixLines('1. ')">1. 列表</wa-button>
+        <wa-button appearance="plain" size="s" type="button" :aria-expanded="panel === 'link'" aria-controls="markdown-link-panel" @click="openPanel('link')">插入链接</wa-button>
+        <wa-button appearance="plain" size="s" type="button" :aria-expanded="panel === 'image'" aria-controls="markdown-image-panel" @click="openPanel('image')">插入图片</wa-button>
+        <wa-button appearance="plain" size="s" type="button" :aria-pressed="previewOpen" aria-controls="markdown-preview" @click="previewOpen = !previewOpen">预览</wa-button>
       </div>
       <textarea id="description-editor" ref="textarea" v-model="model" name="description" minlength="20" maxlength="10000" required rows="9" placeholder="请描述形态、栖息地、分布等。选中文字后点击工具栏，就能添加格式；图片可用按钮插入。"></textarea>
     </div>
-    <div v-if="panel === 'link'" id="markdown-link-panel" class="editor-insert-panel"><strong>插入链接</strong><label>显示文字<input v-model="label" type="text" placeholder="例如：资料来源"></label><label>HTTPS 链接<input v-model="url" type="text" inputmode="url" placeholder="https://example.org/source"></label><p role="status">{{ message }}</p><div class="editor-insert-actions"><button type="button" @click="panel = ''">取消</button><button type="button" data-editor-insert @click="insertLink">插入链接</button></div></div>
-    <div v-if="panel === 'image'" id="markdown-image-panel" class="editor-insert-panel"><strong>插入正文图片</strong><label>图片说明<input v-model="label" type="text" placeholder="例如：毒鹅膏的菌盖"></label><label>图片外链（HTTPS）<input v-model="url" type="text" inputmode="url" placeholder="https://example.org/photo.jpg"></label><label>图片作者及授权<input v-model="credit" type="text" placeholder="例如：张三，CC BY 4.0"></label><p role="status">{{ message }}</p><div class="editor-insert-actions"><button type="button" @click="panel = ''">取消</button><button type="button" data-editor-insert @click="insertImage">插入图片</button></div></div>
+    <div v-if="panel === 'link'" id="markdown-link-panel" class="editor-insert-panel">
+      <strong>插入链接</strong>
+      <wa-input label="显示文字" :value.prop="label" placeholder="例如：资料来源" @input="label = $event.target.value"></wa-input>
+      <wa-input label="HTTPS 链接" :value.prop="url" type="url" placeholder="https://example.org/source" @input="url = $event.target.value"></wa-input>
+      <p role="status">{{ message }}</p>
+      <div class="editor-insert-actions"><wa-button appearance="outlined" size="s" type="button" @click="panel = ''">取消</wa-button><wa-button appearance="filled" variant="brand" size="s" type="button" @click="insertLink">插入链接</wa-button></div>
+    </div>
+    <div v-if="panel === 'image'" id="markdown-image-panel" class="editor-insert-panel">
+      <strong>插入正文图片</strong>
+      <wa-input label="图片说明" :value.prop="label" placeholder="例如：毒鹅膏的菌盖" @input="label = $event.target.value"></wa-input>
+      <wa-input label="图片外链（HTTPS）" :value.prop="url" type="url" placeholder="https://example.org/photo.jpg" @input="url = $event.target.value"></wa-input>
+      <wa-input label="图片作者及授权" :value.prop="credit" placeholder="例如：张三，CC BY 4.0" @input="credit = $event.target.value"></wa-input>
+      <p role="status">{{ message }}</p>
+      <div class="editor-insert-actions"><wa-button appearance="outlined" size="s" type="button" @click="panel = ''">取消</wa-button><wa-button appearance="filled" variant="brand" size="s" type="button" @click="insertImage">插入图片</wa-button></div>
+    </div>
     <div v-show="previewOpen" id="markdown-preview" ref="preview" class="markdown-preview prose" aria-label="介绍与特征预览"></div>
   </div>
 </template>

@@ -17,7 +17,7 @@ npm run dev
 
 把此仓库推送到 `biotapedia/biopedia-web`。在 **Settings → Pages → Build and deployment** 中把来源设为 **GitHub Actions**；`main` 分支上的工作流会执行 `npm ci`、构建并发布 `dist/`。数据仓库设置见其 README。两个默认 Pages 项目会位于 `https://biotapedia.github.io/biopedia-web/` 和 `https://biotapedia.github.io/biopedia-data/`。
 
-前端使用 Vue 单文件组件管理目录、分页、投稿表单和 Markdown 编辑器的状态，继续使用 [Web Awesome](https://webawesome.com/docs) 的卡片、按钮组件。Web Awesome 的 CSS 与加载器固定版本并通过 CDN 加载，因此访问者需要能连接该 CDN。`src/CatalogApp.vue` 与 `src/ContributionApp.vue` 分别负责两个页面；`src/MarkdownEditor.vue` 是投稿编辑器；`catalog-api.js` 共用数据请求；`taxonomy.js` 保存分类级别规则。`theme.css` 和 `contribute.css` 分别管理全站与投稿页样式。
+前端使用 Vue 单文件组件管理目录、分页、投稿表单和 Markdown 编辑器的状态，并从 npm 构建 [Web Awesome](https://webawesome.com/docs) 的卡片、按钮及表单组件。`src/CatalogApp.vue` 与 `src/ContributionApp.vue` 分别负责两个页面；`src/MarkdownEditor.vue` 是投稿编辑器；`catalog-api.js` 共用数据请求；`taxonomy.js` 保存分类级别规则。`theme.css` 和 `contribute.css` 分别管理全站与投稿页样式。
 
 新增或编辑图鉴数据时，这个仓库无需重新发布。若使用自定义域名或不同仓库名，调整 `catalog-api.js` 中的 `dataBase` 和 `src/ContributionApp.vue` 中的投稿仓库地址规则。
 

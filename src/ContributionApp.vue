@@ -178,23 +178,94 @@ onMounted(async () => {
 </script>
 
 <template>
-  <header class="topbar"><a class="brand" href="./#/" aria-label="返回万物图鉴首页"><span class="brand-mark" aria-hidden="true">✳</span><span>BIOTAPEDIA <small>万物图鉴</small></span></a><nav aria-label="主导航"><a class="back-to-catalog" :href="backHref">← 返回图鉴</a></nav></header>
+  <header class="topbar">
+    <a class="brand" href="./#/" aria-label="返回万物图鉴首页"><span class="brand-mark" aria-hidden="true">✳</span><span>BIOTAPEDIA <small>万物图鉴</small></span></a>
+    <nav aria-label="主导航"><a class="back-to-catalog" :href="backHref">← 返回图鉴</a></nav>
+  </header>
+
   <main class="contribute-layout">
-    <section class="contribute-intro" aria-labelledby="contribute-title"><p class="section-kicker">CONTRIBUTE / 社区共建</p><h1 id="contribute-title">让新的生命条目<br><em>加入图鉴。</em></h1><p class="contribute-lead">从任意层级开始，选择已有分类；缺少上级分类时，也可以在同一次投稿中补齐。</p><ol class="contribute-steps"><li><span>01</span><div><strong>确定分类路径</strong><p>沿已有目录逐级选择，或补充缺失层级。</p></div></li><li><span>02</span><div><strong>填写条目资料</strong><p>提供名称、介绍，以及可以核对的来源。</p></div></li><li><span>03</span><div><strong>交给社区审核</strong><p>确认 GitHub 投稿后，管理员会审阅内容。</p></div></li></ol><p class="contribute-note">你的草稿会在浏览器中生成。提交时会前往 GitHub 确认。</p></section>
-    <section class="contribute-sheet" aria-label="添加条目表单"><form ref="formRef" method="post" @submit.prevent="submit">
-      <div class="contribute-form-head"><div><span class="section-kicker">CONTRIBUTE / 社区投稿</span><h2>填写条目信息</h2></div></div>
-      <p class="contribute-form-intro">先选择已有上级分类；缺少中间层级时，可在这里补齐。所有新条目将进入同一个 Pull Request 审核。</p>
-      <section class="parent-picker" aria-label="选择上级分类"><div class="picker-heading"><strong>上级分类路径</strong><button type="button" @click="resetParent">从根目录重新选择</button></div><div class="picker-path"><span class="picker-root">根目录</span><span v-for="(node, index) in parentPath" :key="index" :class="{ 'picker-new': node.pending }"> → {{ pickerLabel(node) }}</span></div><p class="picker-status" role="status">{{ pickerStatus }}</p>
-        <div class="picker-row"><select v-model="choice" aria-label="选择已有的下级分类或新增分类" :disabled="pickerLoading && !choices.length"><option v-if="pickerLoading && !choices.length" value="">正在加载下级分类…</option><option v-for="item in choices" :key="item.id" :value="item.id">{{ item.name_zh }} · {{ rankLabel(item.rank) }} · {{ item.scientific_name }}</option><option value="__new__">没有我想要的分类，新增一个…</option></select><button v-if="choice !== '__new__'" type="button" :disabled="!choice || pickerLoading" @click="enterSelected">进入所选分类</button><button v-if="parentPage !== null" type="button" :disabled="pickerLoading" @click="loadPickerPage(parentPage)">加载更多</button></div>
-        <fieldset v-if="choice === '__new__'" class="new-parent-form"><legend>创建缺少的上级分类</legend><div class="form-grid"><label class="form-field"><span>新增上级分类的级别</span><select v-model="newParent.rank"><option v-for="[value, label] in rankOptions" :key="value" :value="value">{{ label }}</option></select></label><label class="form-field"><span>中文名</span><input v-model="newParent.name_zh" maxlength="120" placeholder="例如：鹅膏属"></label><label class="form-field"><span>学名</span><input v-model="newParent.scientific_name" maxlength="160" placeholder="例如：Amanita"></label><label class="form-field form-wide"><span>简介</span><textarea v-model="newParent.description" minlength="20" maxlength="10000" rows="2" placeholder="请描述这一上级分类，至少 20 字。"></textarea></label></div><button class="secondary-button" type="button" @click="addParent">添加到本次投稿路径</button></fieldset><button v-if="parentPath.length" id="parent-undo" type="button" @click="undoParent">撤销上一步</button>
-      </section>
-      <div class="form-grid"><label class="form-field"><span>所选上级分类</span><input :value="parentLabel" type="text" readonly><small>可在上方切换，或添加缺失层级</small></label><label class="form-field"><span>本次条目的分类级别 *</span><select v-model="form.rank" name="rank" required><option v-for="[value, label] in rankOptions" :key="value" :value="value">{{ label }}</option></select><small>例如新增物种选“种”；缺失的上级分类在上方单独选择级别。</small></label><label class="form-field"><span>中文名 *</span><input v-model="form.name_zh" name="name_zh" maxlength="120" required placeholder="例如：狮"></label><label class="form-field"><span>学名 *</span><input v-model="form.scientific_name" name="scientific_name" maxlength="160" required placeholder="例如：Panthera leo"></label>
-        <MarkdownEditor v-model="form.description" />
-        <label class="form-field form-wide"><span>封面图片外链（HTTPS）</span><input v-model="form.image_url" name="image_url" type="url" placeholder="https://example.org/photo.jpg"><small>用于条目顶部；正文中的图片请用上方“插入图片”按钮。</small></label><label class="form-field"><span>封面图片作者及授权</span><input v-model="form.image_credit" name="image_credit" maxlength="1000" placeholder="填写封面图片时必填"></label><label class="form-field"><span>资料来源（HTTPS）</span><input v-model="form.source_url" name="source_url" type="url" placeholder="https://example.org/source"></label>
-      </div>
-      <div v-if="draftVisible" class="draft-panel"><p>{{ draftMessage }}</p><textarea :value="draftBody" readonly rows="6" aria-label="投稿草稿"></textarea><a v-if="draftLink" :href="draftLink" target="_blank" rel="noopener noreferrer">打开 GitHub 投稿页面 ↗</a></div>
-      <div class="contribute-form-actions"><wa-button class="secondary-button" type="button" appearance="outlined" variant="brand" @click="copyDraft">复制草稿</wa-button><button class="primary-button" type="submit">准备投稿 <span aria-hidden="true">↗</span></button></div>
-    </form></section>
+    <section class="contribute-intro" aria-labelledby="contribute-title">
+      <p class="section-kicker">CONTRIBUTE / 社区共建</p>
+      <h1 id="contribute-title">让新的生命条目<br><em>加入图鉴。</em></h1>
+      <p class="contribute-lead">从任意层级开始，选择已有分类；缺少上级分类时，也可以在同一次投稿中补齐。</p>
+      <ol class="contribute-steps">
+        <li><span>01</span><div><strong>确定分类路径</strong><p>沿已有目录逐级选择，或补充缺失层级。</p></div></li>
+        <li><span>02</span><div><strong>填写条目资料</strong><p>提供名称、介绍，以及可以核对的来源。</p></div></li>
+        <li><span>03</span><div><strong>交给社区审核</strong><p>确认 GitHub 投稿后，管理员会审阅内容。</p></div></li>
+      </ol>
+      <p class="contribute-note">你的草稿会在浏览器中生成。提交时会前往 GitHub 确认。</p>
+    </section>
+
+    <section class="contribute-sheet" aria-label="添加条目表单">
+      <form ref="formRef" method="post" @submit.prevent="submit">
+        <div class="contribute-form-head"><div><span class="section-kicker">CONTRIBUTE / 社区投稿</span><h2>填写条目信息</h2></div></div>
+        <p class="contribute-form-intro">先选择已有上级分类；缺少中间层级时，可在这里补齐。所有新条目将进入同一个 Pull Request 审核。</p>
+
+        <section class="parent-picker" aria-label="选择上级分类">
+          <div class="picker-heading">
+            <strong>上级分类路径</strong>
+            <wa-button appearance="plain" variant="brand" size="s" type="button" @click="resetParent">从根目录重新选择</wa-button>
+          </div>
+          <div class="picker-path"><span class="picker-root">根目录</span><span v-for="(node, index) in parentPath" :key="index" :class="{ 'picker-new': node.pending }"> → {{ pickerLabel(node) }}</span></div>
+          <p class="picker-status" role="status">{{ pickerStatus }}</p>
+          <div class="picker-row">
+            <wa-select
+              label="选择已有的下级分类或新增分类"
+              :value.prop="choice"
+              :disabled="pickerLoading && !choices.length"
+              @change="choice = $event.target.value"
+            >
+              <wa-option v-if="pickerLoading && !choices.length" value="" disabled>正在加载下级分类…</wa-option>
+              <wa-option v-for="item in choices" :key="item.id" :value="item.id">{{ item.name_zh }} · {{ rankLabel(item.rank) }} · {{ item.scientific_name }}</wa-option>
+              <wa-option value="__new__">没有我想要的分类，新增一个…</wa-option>
+            </wa-select>
+            <wa-button v-if="choice !== '__new__'" appearance="outlined" variant="brand" size="s" type="button" :disabled="!choice || pickerLoading" @click="enterSelected">进入所选分类</wa-button>
+            <wa-button v-if="parentPage !== null" appearance="outlined" variant="brand" size="s" type="button" :disabled="pickerLoading" @click="loadPickerPage(parentPage)">加载更多</wa-button>
+          </div>
+
+          <fieldset v-if="choice === '__new__'" class="new-parent-form">
+            <legend>创建缺少的上级分类</legend>
+            <div class="form-grid">
+              <div class="form-field">
+                <wa-select label="新增上级分类的级别" :value.prop="newParent.rank" @change="newParent.rank = $event.target.value">
+                  <wa-option v-for="[value, label] in rankOptions" :key="value" :value="value">{{ label }}</wa-option>
+                </wa-select>
+              </div>
+              <div class="form-field"><wa-input label="中文名" :value.prop="newParent.name_zh" maxlength="120" placeholder="例如：鹅膏属" @input="newParent.name_zh = $event.target.value"></wa-input></div>
+              <div class="form-field"><wa-input label="学名" :value.prop="newParent.scientific_name" maxlength="160" placeholder="例如：Amanita" @input="newParent.scientific_name = $event.target.value"></wa-input></div>
+              <div class="form-field form-wide"><wa-textarea label="简介" :value.prop="newParent.description" minlength="20" maxlength="10000" rows="2" placeholder="请描述这一上级分类，至少 20 字。" @input="newParent.description = $event.target.value"></wa-textarea></div>
+            </div>
+            <wa-button appearance="outlined" variant="brand" size="s" type="button" @click="addParent">添加到本次投稿路径</wa-button>
+          </fieldset>
+          <wa-button v-if="parentPath.length" class="parent-undo" appearance="plain" variant="brand" size="s" type="button" @click="undoParent">撤销上一步</wa-button>
+        </section>
+
+        <div class="form-grid">
+          <div class="form-field"><wa-input label="所选上级分类" :value.prop="parentLabel" hint="可在上方切换，或添加缺失层级" readonly></wa-input></div>
+          <div class="form-field">
+            <wa-select label="本次条目的分类级别" hint="例如新增物种选“种”；缺失的上级分类在上方单独选择级别。" name="rank" required :value.prop="form.rank" @change="form.rank = $event.target.value">
+              <wa-option v-for="[value, label] in rankOptions" :key="value" :value="value">{{ label }}</wa-option>
+            </wa-select>
+          </div>
+          <div class="form-field"><wa-input label="中文名" name="name_zh" required maxlength="120" :value.prop="form.name_zh" placeholder="例如：狮" @input="form.name_zh = $event.target.value"></wa-input></div>
+          <div class="form-field"><wa-input label="学名" name="scientific_name" required maxlength="160" :value.prop="form.scientific_name" placeholder="例如：Panthera leo" @input="form.scientific_name = $event.target.value"></wa-input></div>
+          <MarkdownEditor v-model="form.description" />
+          <div class="form-field form-wide"><wa-input label="封面图片外链（HTTPS）" hint="用于条目顶部；正文中的图片请用上方“插入图片”按钮。" name="image_url" type="url" :value.prop="form.image_url" placeholder="https://example.org/photo.jpg" @input="form.image_url = $event.target.value"></wa-input></div>
+          <div class="form-field"><wa-input label="封面图片作者及授权" name="image_credit" maxlength="1000" :value.prop="form.image_credit" placeholder="填写封面图片时必填" @input="form.image_credit = $event.target.value"></wa-input></div>
+          <div class="form-field"><wa-input label="资料来源（HTTPS）" name="source_url" type="url" :value.prop="form.source_url" placeholder="https://example.org/source" @input="form.source_url = $event.target.value"></wa-input></div>
+        </div>
+
+        <div v-if="draftVisible" class="draft-panel">
+          <p>{{ draftMessage }}</p>
+          <wa-textarea label="投稿草稿" :value.prop="draftBody" readonly rows="6" resize="vertical"></wa-textarea>
+          <a v-if="draftLink" :href="draftLink" target="_blank" rel="noopener noreferrer">打开 GitHub 投稿页面 ↗</a>
+        </div>
+        <div class="contribute-form-actions">
+          <wa-button appearance="outlined" variant="brand" type="button" @click="copyDraft">复制草稿</wa-button>
+          <wa-button appearance="filled" variant="brand" type="submit">准备投稿 <span aria-hidden="true">↗</span></wa-button>
+        </div>
+      </form>
+    </section>
   </main>
   <footer class="footer"><span>BIOTAPEDIA / 万物图鉴</span><span>内容由社区共同维护 · 文字存于 GitHub 仓库</span></footer>
 </template>
