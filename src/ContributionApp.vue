@@ -49,8 +49,8 @@ async function loadPickerPage(page = 1) {
     if (sequence !== pickerSequence) return;
     choices.value = [...choices.value, ...data.items];
     parentPage.value = data.next ?? null;
-    choice.value = page === 1 ? (choices.value[0]?.id ?? '__new__') : choice.value;
-    pickerStatus.value = data.items.length || page > 1 ? '选择已有分类继续向下；若没有合适的分类，请选列表末尾的“没有我想要的分类”。' : '这里尚无下级分类，请填写下方表单新增。';
+    choice.value = page === 1 ? (choices.value.length ? '' : '__new__') : choice.value;
+    pickerStatus.value = data.items.length || page > 1 ? '选择已有分类后会自动进入；若没有合适的分类，请选列表末尾的“没有我想要的分类”。' : '这里尚无下级分类，请填写下方表单新增。';
   } catch (cause) {
     if (sequence !== pickerSequence) return;
     if (page === 1) choice.value = '__new__';
@@ -69,8 +69,10 @@ function refreshPicker() {
 }
 function resetParent() { parentPath.value = []; refreshPicker(); }
 function undoParent() { parentPath.value.pop(); refreshPicker(); }
-function enterSelected() {
-  const selected = choices.value.find(item => item.id === choice.value);
+function selectChoice(value) {
+  choice.value = value;
+  if (!value || value === '__new__') return;
+  const selected = choices.value.find(item => item.id === value);
   if (!selected) return;
   parentPath.value.push({ id: selected.id, name_zh: selected.name_zh, rank: selected.rank, pending: false });
   refreshPicker();
@@ -211,15 +213,15 @@ onMounted(async () => {
           <div class="picker-row">
             <wa-select
               label="选择已有的下级分类或新增分类"
+              placeholder="选择分类后自动进入…"
               :value.prop="choice"
               :disabled="pickerLoading && !choices.length"
-              @change="choice = $event.target.value"
+              @change="selectChoice($event.target.value)"
             >
               <wa-option v-if="pickerLoading && !choices.length" value="" disabled>正在加载下级分类…</wa-option>
               <wa-option v-for="item in choices" :key="item.id" :value="item.id">{{ item.name_zh }} · {{ rankLabel(item.rank) }} · {{ item.scientific_name }}</wa-option>
               <wa-option value="__new__">没有我想要的分类，新增一个…</wa-option>
             </wa-select>
-            <wa-button v-if="choice !== '__new__'" appearance="outlined" variant="brand" size="s" type="button" :disabled="!choice || pickerLoading" @click="enterSelected">进入所选分类</wa-button>
             <wa-button v-if="parentPage !== null" appearance="outlined" variant="brand" size="s" type="button" :disabled="pickerLoading" @click="loadPickerPage(parentPage)">加载更多</wa-button>
           </div>
 
