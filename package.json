@@ -9,6 +9,17 @@
   },
   "dependencies": {
     "@awesome.me/webawesome": "^3.14.0",
+    "@lucide/vue": "1.50.0",
+    "@tiptap/core": "3.31.4",
+    "@tiptap/extension-blockquote": "3.31.4",
+    "@tiptap/extension-image": "3.31.4",
+    "@tiptap/extension-link": "3.31.4",
+    "@tiptap/extension-list": "3.31.4",
+    "@tiptap/extensions": "3.31.4",
+    "@tiptap/markdown": "3.31.4",
+    "@tiptap/pm": "3.31.4",
+    "@tiptap/starter-kit": "3.31.4",
+    "@tiptap/vue-3": "3.31.4",
     "vue": "^3.5.0"
   },
   "devDependencies": {

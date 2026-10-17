@@ -80,18 +80,26 @@
 .markdown-field > label { color: #3b5845; font-weight: 700; }
 .markdown-editor { overflow: hidden; border: 1px solid #d0e0d3; border-radius: 11px; background: #fff; }
 .markdown-editor:focus-within { border-color: #70a980; box-shadow: 0 0 0 3px rgba(78, 152, 96, .15); }
-.markdown-toolbar { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px; border-bottom: 1px solid #dfe9e0; background: #f6faf5; }
-.markdown-toolbar wa-button::part(button) { min-height: 32px; padding: 5px 9px; border-radius: 7px; color: #315842; font-size: 12px; font-weight: 700; }
-.markdown-toolbar wa-button:hover::part(button), .markdown-toolbar wa-button[aria-pressed="true"]::part(button), .markdown-toolbar wa-button[aria-expanded="true"]::part(button) { background: #e7f2e4; }
-.markdown-toolbar wa-button:focus-visible, .editor-insert-actions wa-button:focus-visible { outline: 2px solid #64a77b; outline-offset: 2px; }
-.contribute-sheet .markdown-editor textarea, .contribute-sheet .markdown-editor textarea:focus { display: block; width: 100%; min-height: 185px; padding: 16px; border: 0; border-radius: 0; background: #fff; box-shadow: none; outline: none; line-height: 1.8; }
+.markdown-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; padding: 6px 8px; border-bottom: 1px solid #dfe9e0; background: #f6faf5; }
+.markdown-toolbar button { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-width: 32px; height: 32px; padding: 0 7px; border: 0; border-radius: 7px; background: transparent; color: #315842; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+.markdown-toolbar button:hover:not(:disabled), .markdown-toolbar button[aria-pressed="true"], .markdown-toolbar button[aria-expanded="true"] { background: #e7f2e4; }
+.markdown-toolbar button[aria-pressed="true"] { color: #1f4a30; }
+.markdown-toolbar button:disabled { opacity: .35; cursor: default; }
+.markdown-toolbar button:focus-visible, .editor-insert-actions wa-button:focus-visible { outline: 2px solid #64a77b; outline-offset: 2px; }
+.markdown-toolbar .toolbar-divider { width: 1px; height: 18px; margin: 0 4px; background: #d4e2d5; }
+.markdown-toolbar .toolbar-source { margin-left: auto; }
+.contribute-sheet .markdown-editor .markdown-source, .contribute-sheet .markdown-editor .markdown-source:focus { display: block; width: 100%; min-height: 185px; padding: 16px; border: 0; border-radius: 0; background: #fff; box-shadow: none; outline: none; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; line-height: 1.8; }
+.markdown-rich { min-height: 185px; max-width: none; padding: 16px; outline: none; font-weight: 400; overflow-wrap: anywhere; }
+.markdown-rich > :first-child { margin-top: 0; }
+.markdown-rich p.is-editor-empty:first-child::before { content: attr(data-placeholder); float: left; height: 0; color: #9aab9f; pointer-events: none; }
+.markdown-rich img { display: inline-block; }
+.markdown-rich img.ProseMirror-selectednode { outline: 2px solid #64a77b; outline-offset: 2px; }
 .editor-insert-panel { display: grid; gap: 11px; margin-top: 12px; padding: 17px; border: 1px solid #cde2ce; border-radius: 11px; background: #f4faf2; }
 .editor-insert-panel > strong { color: #285c3e; font-size: 13px; }
 .editor-insert-panel wa-input::part(form-control-label) { color: #496b53; font-size: 12px; }
 .editor-insert-panel p { min-height: 0; margin: 0; color: #a14632; font-size: 12px; }
 .editor-insert-actions { display: flex; justify-content: flex-end; gap: 8px; }
 .editor-insert-actions wa-button::part(button) { border-radius: 8px; font-size: 12px; font-weight: 700; }
-.markdown-preview { min-height: 72px; max-width: none; margin-top: 12px; padding: 18px; border: 1px solid #d6e6d7; border-radius: 11px; background: #fbfdf9; font-weight: 400; }
 
 @media (max-width: 900px) {
   .contribute-layout { grid-template-columns: 1fr; gap: 20px; width: min(760px, calc(100% - 36px)); margin-top: 26px; }
@@ -108,5 +116,5 @@
   .contribute-sheet .form-grid { grid-template-columns: 1fr; }
   .contribute-sheet .form-wide { grid-column: auto; }
   .contribute-sheet .contribute-form-actions { flex-wrap: wrap; }
-  .markdown-toolbar wa-button::part(button) { padding-inline: 7px; }
+  .markdown-toolbar .toolbar-divider { display: none; }
 }

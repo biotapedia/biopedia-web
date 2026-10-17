@@ -15,8 +15,12 @@ export function parseFrontMatter(text) {
   return { ...metadata, body: match[2].trim() };
 }
 
-const inlinePattern = /!\[([^\]]*)\]\(([^)\s]+)\)|\[([^\]]+)\]\(([^)\s]+)\)|\*\*([\s\S]+?)\*\*|__([\s\S]+?)__|\*([^*\n]+)\*|_([^_\n]+)_|`([^`\n]+)`/g;
-const imagePattern = /!\[[^\]]*\]\(([^)\s]+)\)/g;
+const inlinePattern = /!\[((?:\\.|[^\]\\])*)\]\(([^)\s]+)\)|\[((?:\\.|[^\]\\])+)\]\(([^)\s]+)\)|\*\*((?:\\.|[^\\])+?)\*\*|__((?:\\.|[^\\])+?)__|\*((?:\\.|[^*\n\\])+)\*|_((?:\\.|[^_\n\\])+)_|`([^`\n]+)`|\\([!-\/:-@[-`{-~])/g;
+const imagePattern = /!\[(?:\\.|[^\]\\])*\]\(([^)\s]+)\)/g;
+const entities = { amp: '&', lt: '<', gt: '>', quot: '"', '#39': "'" };
+const decodeEntities = text => text.replace(/&(amp|lt|gt|quot|#39);/g, (_, name) => entities[name]);
+const plainText = text => decodeEntities(text.replace(/\\([!-\/:-@[-`{-~])/g, '$1'));
+const textNode = text => document.createTextNode(decodeEntities(text));
 
 export function markdownImageUrls(source) {
   return [...source.matchAll(imagePattern)].map(match => match[1]);
@@ -24,18 +28,18 @@ export function markdownImageUrls(source) {
 
 function appendInline(parent, source, depth = 0) {
   if (depth > 6) {
-    parent.append(document.createTextNode(source));
+    parent.append(document.createTextNode(plainText(source)));
     return;
   }
   let cursor = 0;
   for (const match of source.matchAll(inlinePattern)) {
-    parent.append(document.createTextNode(source.slice(cursor, match.index)));
+    parent.append(textNode(source.slice(cursor, match.index)));
     if (match[1] !== undefined) {
       const url = safeHttps(match[2]);
       if (url) {
         const image = document.createElement('img');
         image.src = url;
-        image.alt = match[1];
+        image.alt = plainText(match[1]);
         image.loading = 'lazy';
         image.decoding = 'async';
         image.referrerPolicy = 'no-referrer';
@@ -63,14 +67,16 @@ function appendInline(parent, source, depth = 0) {
       const emphasis = document.createElement('em');
       appendInline(emphasis, match[7] ?? match[8], depth + 1);
       parent.append(emphasis);
-    } else {
+    } else if (match[9] !== undefined) {
       const code = document.createElement('code');
       code.textContent = match[9];
       parent.append(code);
+    } else {
+      parent.append(document.createTextNode(match[10]));
     }
     cursor = match.index + match[0].length;
   }
-  parent.append(document.createTextNode(source.slice(cursor)));
+  parent.append(textNode(source.slice(cursor)));
 }
 
 export function renderMarkdown(source) {

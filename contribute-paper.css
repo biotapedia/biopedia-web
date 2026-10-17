@@ -79,17 +79,19 @@
 .markdown-editor { border-color: #bdb9a5; border-radius: 0; background: #fdfaf1; }
 .markdown-editor:focus-within { border-color: #647d5e; box-shadow: 2px 2px 0 #d4d6bf; }
 .markdown-toolbar { border-color: #cbc2ad; background: #eee9d9; }
-.markdown-toolbar wa-button::part(button), .editor-insert-actions wa-button::part(button) {
+.markdown-toolbar button { border-radius: 0; color: #3f5b43; }
+.editor-insert-actions wa-button::part(button) {
   border-radius: 0;
   color: #3f5b43;
 }
-.markdown-toolbar wa-button:hover::part(button),
-.markdown-toolbar wa-button[aria-pressed="true"]::part(button),
-.markdown-toolbar wa-button[aria-expanded="true"]::part(button) { background: #dfdfc9; }
-.contribute-sheet .markdown-editor textarea, .contribute-sheet .markdown-editor textarea:focus { background: #fdfaf1; }
+.markdown-toolbar button:hover:not(:disabled),
+.markdown-toolbar button[aria-pressed="true"],
+.markdown-toolbar button[aria-expanded="true"] { background: #dfdfc9; }
+.markdown-toolbar .toolbar-divider { background: #cbc2ad; }
+.contribute-sheet .markdown-editor .markdown-source, .contribute-sheet .markdown-editor .markdown-source:focus { background: #fdfaf1; }
+.markdown-rich p.is-editor-empty:first-child::before { color: #a29d8a; }
 .editor-insert-panel { border-color: #bdc2a9; border-radius: 0; background: #f2f1e5; }
 .editor-insert-panel > strong { color: #385c40; }
-.markdown-preview { border-color: #c4bea9; border-radius: 0; background: #faf7eb; }
 .draft-panel { border-color: #b9c1a7; border-radius: 0; background: #f0f0e2; }
 .draft-panel p { color: #476047; }
 

@@ -178,6 +178,7 @@ function prepareDraft() {
     image_credit: form.image_credit.trim(),
     source_url: form.source_url.trim()
   };
+  if (payload.description.length < 20 || payload.description.length > 10000) return draftError('介绍与特征需要 20 到 10000 字。');
   if (payload.image_url && !payload.image_credit) return draftError('填写图片链接时，请补充图片作者和授权。');
   if ((payload.image_url && !safeHttps(payload.image_url)) || (payload.source_url && !safeHttps(payload.source_url))) return draftError('图片链接和资料来源必须使用有效的 HTTPS 地址。');
   if (markdownImageUrls(payload.description).some(url => !safeHttps(url))) return draftError('介绍中的图片也必须使用有效的 HTTPS 外链。');
