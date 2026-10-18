@@ -2,6 +2,9 @@
 import { computed, defineAsyncComponent, onMounted, onUnmounted, ref } from 'vue';
 import { fetchData, fetchTaxon, ancestorPath } from '../catalog-api.js';
 import { conservationLabel, rankLabel, safeHttps } from '../taxonomy.js';
+
+// The cover is shown whole; this lets its own blurred copy fill the space around it.
+const coverStyle = url => (safeHttps(url) ? { '--cover': `url("${safeHttps(url)}")` } : null);
 import { renderMarkdown } from '../markdown.js';
 import { regionIndex, regionPath } from './regions.js';
 
@@ -122,7 +125,7 @@ onUnmounted(() => { window.removeEventListener('hashchange', route); });
       <div v-if="taxon && !error" class="detail">
         <article class="taxon-detail">
           <div class="detail-copy"><div class="detail-rank"><span class="detail-rank-badge">{{ rankLabel(taxon.rank) }}</span><span v-if="conservationLabel(taxon.conservation_status)" :class="['status-badge', `status-${taxon.conservation_status}`]" :title="`IUCN 红色名录：${conservationLabel(taxon.conservation_status)}`">{{ conservationLabel(taxon.conservation_status) }} · {{ taxon.conservation_status }}</span><span>{{ taxon.id }}</span></div><h2 class="detail-title">{{ taxon.name_zh }}</h2><p class="detail-latin">{{ taxon.scientific_name }}</p><div v-markdown="taxon.body" class="prose"></div><a v-if="safeHttps(taxon.source_url)" class="source-link" :href="safeHttps(taxon.source_url)" target="_blank" rel="noopener noreferrer">查看资料来源 ↗</a></div>
-          <div class="detail-visual"><img v-if="safeHttps(taxon.image_url)" :src="safeHttps(taxon.image_url)" :alt="taxon.name_zh" loading="lazy" referrerpolicy="no-referrer" @error="$event.target.remove()"><span class="visual-glyph">✳</span><span class="visual-label">{{ taxon.image_credit || '生命之树 / BIOTAPEDIA' }}</span></div>
+          <div class="detail-visual" :style="coverStyle(taxon.image_url)"><img v-if="safeHttps(taxon.image_url)" :src="safeHttps(taxon.image_url)" :alt="taxon.name_zh" loading="lazy" referrerpolicy="no-referrer" @error="$event.target.remove()"><span class="visual-glyph">✳</span><span class="visual-label">{{ taxon.image_credit || '生命之树 / BIOTAPEDIA' }}</span></div>
         </article>
         <section v-if="distribution.length" class="distribution" aria-labelledby="distribution-title">
           <div class="distribution-head"><p class="section-kicker">RANGE / 分布</p><h3 id="distribution-title">分布地区</h3></div>
