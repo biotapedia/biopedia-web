@@ -31,4 +31,11 @@ npm run dev
 
 ## 分布地图
 
-条目可在元数据中写入 `distribution: ["tdwg-36","fao-61"]`。编号可以是任意一级：陆地用 TDWG WGSRPD 的一、二级区，海洋用 FAO 主要渔区，层级与中文名定义在 `src/regions.js`。`src/assets/regions.topo.json` 只保存最细一级的边界，上级区域在浏览时用 `topojson.merge` 合成；运行 `scripts/build-regions.sh` 可从原始数据重新生成该文件。地图组件 `src/DistributionMap.vue` 仅在条目含分布信息或打开投稿页时按需加载。投稿页可在区域树中勾选，也可直接点击地图选择；选中某一级下的全部区域会自动合并为该级。`biota-data/scripts/regions.json` 保存同一套编号供数据校验，修改区域时需同步。
+条目可在元数据中写入 `distribution: ["tdwg-36","fao-61"]`。编号可以是任意一级：陆地用 TDWG WGSRPD 的一、二级区，海洋用 FAO 主要渔区，层级与中文名定义在 `src/regions.js`。`src/assets/regions.topo.json` 只保存最细一级的边界，上级区域在浏览时用 `topojson.merge` 合成；运行 `npm run build:regions` 可从原始数据重新生成该文件。地图组件 `src/DistributionMap.vue` 仅在条目含分布信息或打开投稿页时按需加载。投稿页可在区域树中勾选，也可直接点击地图选择；选中某一级下的全部区域会自动合并为该级。`biota-data/scripts/regions.json` 保存同一套编号供数据校验，修改区域时需同步。
+
+### 地图数据来源与许可
+
+- **陆地边界**：Natural Earth 1:1000 万国界的中国视角版本（`ne_10m_admin_0_countries_chn`），属于公有领域。台湾、香港、澳门和黄岩岛归入“中国”区（`tdwg-36`）。
+- **陆地区划**：区域编号和层级沿用 TDWG WGSRPD 第 2 版。构建脚本只用 WGSRPD 的数据表和形状判断每个国家或省份属于哪一区，生成的文件中不包含 WGSRPD 的几何数据，因为它的边界文件没有声明许可（见 [tdwg/wgsrpd#14](https://github.com/tdwg/wgsrpd/issues/14)）。
+- **海区**：FAO 主要渔区，采用 CC BY 4.0 许可，并须按 FAO 规定的格式引用。地图下方的“地图来源”给出了引用、修改说明和免责声明；FAO 未认可本站，不得以任何方式暗示 FAO 认可。重新生成数据时，同步更新 `src/DistributionMap.vue` 中的访问日期。
+

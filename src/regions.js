@@ -1,6 +1,7 @@
 // Distribution regions: TDWG WGSRPD levels 1–2 on land, FAO major fishing areas at sea.
 // Leaves match feature ids in assets/regions.topo.json; parent shapes are merged from their leaves.
-// Taiwan (WGSRPD TAI) is dissolved into tdwg-36 when the geometry is built.
+// Land shapes are Natural Earth countries (China point of view) grouped into these regions by scripts/build-regions.mjs,
+// so China (tdwg-36) includes Taiwan, Hong Kong and Macao.
 // biota-data/scripts/regions.json mirrors these ids and parents for validation; keep them in sync.
 const land = [
   ['tdwg-1', '欧洲', [['tdwg-10', '北欧'], ['tdwg-11', '中欧'], ['tdwg-12', '西南欧'], ['tdwg-13', '东南欧'], ['tdwg-14', '东欧']]],

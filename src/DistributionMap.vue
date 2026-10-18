@@ -148,6 +148,17 @@ onMounted(async () => {
       <path class="map-outline" :d="paths.sphere" />
     </svg>
     <p v-else class="distribution-status" role="status">{{ error || '正在载入地图…' }}</p>
-    <figcaption>{{ interactive ? '点击区域选择或取消 · 拖动旋转' : '拖动或用方向键旋转' }} · 陆地区划：TDWG WGSRPD · 海区：FAO 主要渔区</figcaption>
+    <figcaption>
+      {{ interactive ? '点击区域选择或取消 · 拖动旋转' : '拖动或用方向键旋转' }}
+      <details class="map-sources">
+        <summary>地图来源</summary>
+        <ul>
+          <li>陆地区划：<a href="https://www.tdwg.org/standards/wgsrpd/" target="_blank" rel="noopener noreferrer">TDWG World Geographical Scheme for Recording Plant Distributions</a> 第 2 版（Brummitt, 2001）一、二级区。</li>
+          <li>陆地边界：据 <a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener noreferrer">Natural Earth</a> 1:1000 万国界（中国视角版本，公有领域）改绘。</li>
+          <li>海区：FAO. 2024. FAO Major Fishing Areas for Statistical Purposes. In: FAO Fisheries and Aquaculture Division [online]. Accessed on 17 October 2026. <a href="https://www.fao.org/fishery/geonetwork/srv/api/records/ac02a460-da52-11dc-9d70-0017f293bd28" target="_blank" rel="noopener noreferrer">fao.org</a> Licence: <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC-BY-4.0</a>。本站合并并简化了海区边界。</li>
+          <li>海区边界与名称仅为示意，不代表 FAO 对任何国家、领土或海域的法律地位及其边界划定的意见；FAO 未参与、赞助或认可本站。</li>
+        </ul>
+      </details>
+    </figcaption>
   </figure>
 </template>

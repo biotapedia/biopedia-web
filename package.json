@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:regions": "node scripts/build-regions.mjs"
   },
   "dependencies": {
     "@awesome.me/webawesome": "^3.14.0",
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.0",
+    "mapshaper": "^0.7.88",
     "vite": "^7.0.0"
   },
   "engines": {
