@@ -1,7 +1,7 @@
 <script setup>
 import { computed, defineAsyncComponent, onMounted, onUnmounted, ref } from 'vue';
 import { fetchData, fetchTaxon, ancestorPath } from '../catalog-api.js';
-import { rankLabel, safeHttps } from '../taxonomy.js';
+import { conservationLabel, rankLabel, safeHttps } from '../taxonomy.js';
 import { renderMarkdown } from '../markdown.js';
 import { regionIndex, regionPath } from './regions.js';
 
@@ -121,7 +121,7 @@ onUnmounted(() => { window.removeEventListener('hashchange', route); });
       <div class="content-topline"><span class="section-kicker">LIVING CATALOG / 生物分类</span><span class="content-status">{{ status }}</span></div>
       <div v-if="taxon && !error" class="detail">
         <article class="taxon-detail">
-          <div class="detail-copy"><div class="detail-rank"><span class="detail-rank-badge">{{ rankLabel(taxon.rank) }}</span><span>{{ taxon.id }}</span></div><h2 class="detail-title">{{ taxon.name_zh }}</h2><p class="detail-latin">{{ taxon.scientific_name }}</p><div v-markdown="taxon.body" class="prose"></div><a v-if="safeHttps(taxon.source_url)" class="source-link" :href="safeHttps(taxon.source_url)" target="_blank" rel="noopener noreferrer">查看资料来源 ↗</a></div>
+          <div class="detail-copy"><div class="detail-rank"><span class="detail-rank-badge">{{ rankLabel(taxon.rank) }}</span><span v-if="conservationLabel(taxon.conservation_status)" :class="['status-badge', `status-${taxon.conservation_status}`]" :title="`IUCN 红色名录：${conservationLabel(taxon.conservation_status)}`">{{ conservationLabel(taxon.conservation_status) }} · {{ taxon.conservation_status }}</span><span>{{ taxon.id }}</span></div><h2 class="detail-title">{{ taxon.name_zh }}</h2><p class="detail-latin">{{ taxon.scientific_name }}</p><div v-markdown="taxon.body" class="prose"></div><a v-if="safeHttps(taxon.source_url)" class="source-link" :href="safeHttps(taxon.source_url)" target="_blank" rel="noopener noreferrer">查看资料来源 ↗</a></div>
           <div class="detail-visual"><img v-if="safeHttps(taxon.image_url)" :src="safeHttps(taxon.image_url)" :alt="taxon.name_zh" loading="lazy" referrerpolicy="no-referrer" @error="$event.target.remove()"><span class="visual-glyph">✳</span><span class="visual-label">{{ taxon.image_credit || '生命之树 / BIOTAPEDIA' }}</span></div>
         </article>
         <section v-if="distribution.length" class="distribution" aria-labelledby="distribution-title">
@@ -136,8 +136,8 @@ onUnmounted(() => { window.removeEventListener('hashchange', route); });
       </div>
       <div class="directory-heading"><div><p class="section-kicker">{{ taxon ? 'CONTINUE / 继续探索' : 'DISCOVER / 从这里开始' }}</p><h2>{{ error ? '连接失败' : taxon ? (total ? `${taxon.name_zh}的下级分类` : '目录尽头') : '探索生命的主要类群' }}</h2></div><label class="filter-field"><span class="sr-only">筛选当前目录</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3"></circle><path d="m16 16 4.3 4.3"></path></svg><input v-model="filter" type="search" placeholder="筛选当前目录…" autocomplete="off"></label></div>
       <div class="card-grid">
-        <a v-for="(item, index) in visibleItems" :key="item.id" class="taxon-link" :href="`#/taxon/${item.id}`" :aria-label="`${rankLabel(item.rank)}：${item.name_zh}，${item.scientific_name}${item.child_count ? `，${item.child_count} 个下级分类` : ''}`">
-          <wa-card class="taxon-card" appearance="plain"><div class="taxon-card-inner"><div class="card-top"><span class="card-rank">{{ rankLabel(item.rank) }}</span><span class="card-index">{{ String(items.indexOf(item) + 1).padStart(2, '0') }}</span></div><div class="card-body"><h3>{{ item.name_zh }}</h3><p class="latin-name">{{ item.scientific_name }}</p></div><div class="card-bottom"><span>{{ item.child_count ? `${item.child_count} 个下级分类` : '查看详情' }}</span><span class="card-arrow">↗</span></div></div></wa-card>
+        <a v-for="(item, index) in visibleItems" :key="item.id" class="taxon-link" :href="`#/taxon/${item.id}`" :aria-label="`${rankLabel(item.rank)}：${item.name_zh}，${item.scientific_name}${conservationLabel(item.conservation_status) ? `，${conservationLabel(item.conservation_status)}` : ''}${item.child_count ? `，${item.child_count} 个下级分类` : ''}`">
+          <wa-card class="taxon-card" appearance="plain"><div class="taxon-card-inner"><div class="card-top"><span class="card-tags"><span class="card-rank">{{ rankLabel(item.rank) }}</span><span v-if="conservationLabel(item.conservation_status)" :class="['status-badge', `status-${item.conservation_status}`]" :title="`IUCN 红色名录：${conservationLabel(item.conservation_status)}`">{{ conservationLabel(item.conservation_status) }} · {{ item.conservation_status }}</span></span><span class="card-index">{{ String(items.indexOf(item) + 1).padStart(2, '0') }}</span></div><div class="card-body"><h3>{{ item.name_zh }}</h3><p class="latin-name">{{ item.scientific_name }}</p></div><div class="card-bottom"><span>{{ item.child_count ? `${item.child_count} 个下级分类` : '查看详情' }}</span><span class="card-arrow">↗</span></div></div></wa-card>
         </a>
       </div>
       <wa-button v-if="nextPage !== null && !error" class="load-more" type="button" appearance="outlined" variant="brand" :disabled="loadingMore" @click="loadMore">加载更多分类 <span aria-hidden="true">↓</span></wa-button>

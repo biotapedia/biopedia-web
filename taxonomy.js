@@ -10,6 +10,16 @@ export const nextRank = {
   suborder: 'family', family: 'genus', genus: 'species', species: 'subspecies'
 };
 
+// IUCN Red List categories, ordered from most to least threatened. Only species and subspecies carry one.
+export const conservationStatuses = [
+  ['EX', '灭绝'], ['EW', '野外灭绝'], ['CR', '极危'], ['EN', '濒危'], ['VU', '易危'],
+  ['NT', '近危'], ['LC', '无危'], ['DD', '数据缺乏'], ['NE', '未评估']
+];
+const conservationNames = new Map(conservationStatuses);
+export const conservationRanks = new Set(['species', 'subspecies']);
+
+export function conservationLabel(code) { return conservationNames.get(code) || null; }
+
 export function rankLabel(rank) { return rankNames[rank] || rank; }
 
 export function safeHttps(value) {
