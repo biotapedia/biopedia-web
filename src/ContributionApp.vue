@@ -3,7 +3,7 @@ import { computed, defineAsyncComponent, nextTick, onMounted, reactive, ref } fr
 import MarkdownEditor from './MarkdownEditor.vue';
 import { fetchData, fetchTaxon, ancestorPath } from '../catalog-api.js';
 import { markdownImageUrls } from '../markdown.js';
-import { conservationLabel, conservationRanks, conservationStatuses, nextRank, rankLabel, rankNames, safeHttps } from '../taxonomy.js';
+import { conservationLabel, conservationRanks, conservationStatuses, nextRank, rankLabel, rankNames, safeHttps, toxicityLabel, toxicityLevels } from '../taxonomy.js';
 import { normalizeRegions, regionIndex, regionLeaves, regionPath, regionTree, toggleRegionLeaf } from './regions.js';
 
 const DistributionMap = defineAsyncComponent(() => import('./DistributionMap.vue'));
@@ -22,7 +22,7 @@ const editPage = ref(null);
 const editLoading = ref(false);
 const editStatus = ref('');
 const newParent = reactive({ rank: 'kingdom', name_zh: '', scientific_name: '', description: '' });
-const form = reactive({ rank: 'kingdom', name_zh: '', scientific_name: '', description: '', image_url: '', image_credit: '', source_url: '', distribution: [], conservation_status: '' });
+const form = reactive({ rank: 'kingdom', name_zh: '', scientific_name: '', description: '', image_url: '', image_credit: '', source_url: '', distribution: [], conservation_status: '', toxicity: '' });
 const rankOptions = Object.entries(rankNames);
 const showConservation = computed(() => conservationRanks.has(form.rank));
 const repositoryUrl = ref('');
@@ -198,7 +198,8 @@ function prepareDraft() {
     image_credit: form.image_credit.trim(),
     source_url: form.source_url.trim(),
     ...(form.distribution.length ? { distribution: form.distribution } : {}),
-    ...(showConservation.value && form.conservation_status ? { conservation_status: form.conservation_status } : {})
+    ...(showConservation.value && form.conservation_status ? { conservation_status: form.conservation_status } : {}),
+    ...(showConservation.value && form.toxicity ? { toxicity: form.toxicity } : {})
   };
   if (payload.description.length < 20 || payload.description.length > 10000) return draftError('介绍与特征需要 20 到 10000 字。');
   if (payload.image_url && !payload.image_credit) return draftError('填写图片链接时，请补充图片作者和授权。');
@@ -215,6 +216,7 @@ function prepareDraft() {
     payload.image_credit ? `- 图片作者及授权：${payload.image_credit}` : '',
     payload.source_url ? `- 资料来源：${payload.source_url}` : '',
     payload.conservation_status ? `- 濒危等级：${conservationLabel(payload.conservation_status)}（${payload.conservation_status}）` : '',
+    payload.toxicity ? `- 毒性：${toxicityLabel(payload.toxicity)}（概略等级）` : '',
     form.distribution.length ? `- 分布地区：${form.distribution.map(regionLabel).join('、')}` : ''
   ].filter(Boolean);
   const body = [...summary, '', '### 介绍', '', payload.description, '', `<!-- BIOTA_SUBMISSION_V1\n${encodePayload(payload)}\n-->`].join('\n');
@@ -362,6 +364,11 @@ onMounted(async () => {
           <div v-if="showConservation" class="form-field">
             <wa-select label="濒危等级（IUCN 红色名录，可选）" name="conservation_status" clearable placeholder="暂不填写" :value.prop="form.conservation_status" @change="form.conservation_status = $event.target.value">
               <wa-option v-for="[code, label] in conservationStatuses" :key="code" :value="code">{{ label }} · {{ code }}</wa-option>
+            </wa-select>
+          </div>
+          <div v-if="showConservation" class="form-field">
+            <wa-select label="毒性（有明确资料时填写）" name="toxicity" clearable placeholder="暂不填写" :value.prop="form.toxicity" @change="form.toxicity = $event.target.value">
+              <wa-option v-for="[level, label] in toxicityLevels" :key="level" :value="level">{{ label }}</wa-option>
             </wa-select>
           </div>
           <MarkdownEditor v-model="form.description" />

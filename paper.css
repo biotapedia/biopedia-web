@@ -190,6 +190,7 @@ a:focus-visible, button:focus-visible, wa-button:focus-visible, .taxon-link:focu
 .distribution { margin: -18px 0 42px; padding: 22px 24px 20px; border: 1px solid #bfc3a9; background: #f7f4e8; }
 .distribution-head { margin-bottom: 14px; }
 .distribution-head h3 { margin: 4px 0 0; font-family: Georgia, 'Songti SC', serif; font-size: 22px; color: var(--deep); }
+.distribution-explainer { margin: 7px 0 0; color: #777468; font-size: 12px; line-height: 1.6; }
 .distribution-modes { position: absolute; top: 0; right: 0; z-index: 1; display: inline-flex; border: 1px solid #b8af99; background: #f7f4e8; }
 .distribution-modes button { padding: 6px 13px; border: 0; background: transparent; color: #5d6a59; font: inherit; font-size: 12px; cursor: pointer; }
 .distribution-modes button + button { border-left: 1px solid #b8af99; }
@@ -210,6 +211,8 @@ a:focus-visible, button:focus-visible, wa-button:focus-visible, .taxon-link:focu
 .map-sea-selected { fill: #9fb8b0; fill-opacity: .75; }
 .map-land { fill: #fbf8ef; }
 .map-land-selected { fill: #6f8c63; stroke: #3f5c45; stroke-width: .8; stroke-linejoin: round; }
+.distribution-records .map-land-selected { fill: #b6ab87; stroke: #7d7357; }
+.distribution-records .map-sea-selected { fill: #b5bbb0; }
 .map-borders { fill: none; stroke: #b3a98d; stroke-width: .5; stroke-linejoin: round; }
 .map-marker { fill: #45664e; stroke: #fbf8ef; stroke-width: 1.5; }
 .map-hits path { fill: transparent; cursor: pointer; }
@@ -220,6 +223,7 @@ a:focus-visible, button:focus-visible, wa-button:focus-visible, .taxon-link:focu
 .distribution-list li { display: flex; gap: 9px; align-items: baseline; padding-bottom: 8px; border-bottom: 1px dotted #c9c0a9; }
 .distribution-list small { display: block; color: #8a8571; font-size: 11px; }
 .distribution-swatch { flex: none; width: 10px; height: 10px; border: 1px solid #3f5c45; background: #6f8c63; }
+.distribution-records .distribution-swatch { border-color: #7d7357; background: #b6ab87; }
 .distribution-sea .distribution-swatch { border-color: #5f7d75; background: #9fb8b0; }
 
 @media (max-width: 860px) {
@@ -234,9 +238,9 @@ a:focus-visible, button:focus-visible, wa-button:focus-visible, .taxon-link:focu
   .content-status { max-width: 48%; text-align: right; }
 }
 
-/* IUCN conservation status. The code is always printed beside the colour, so meaning never relies on hue alone. */
+/* Conservation and toxicity labels include text so meaning never relies on hue alone. */
 .card-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; }
-.status-badge {
+.status-badge, .toxicity-badge {
   --status-bg: #e4e2d8; --status-fg: #4d4a3e;
   display: inline-flex; align-items: center; border: 1px solid currentColor; padding: 3px 9px;
   background: var(--status-bg); color: var(--status-fg);
@@ -250,6 +254,10 @@ a:focus-visible, button:focus-visible, wa-button:focus-visible, .taxon-link:focu
 .status-NT { --status-bg: #eef0c9; --status-fg: #5c6310; }
 .status-LC { --status-bg: #dcefd9; --status-fg: #23622f; }
 .status-DD, .status-NE { --status-bg: #e7e5dc; --status-fg: #5b5849; }
+.toxicity-none { --status-bg: #e5eee4; --status-fg: #365b3c; }
+.toxicity-mild { --status-bg: #f6eed5; --status-fg: #755d18; }
+.toxicity-toxic { --status-bg: #f8e2cc; --status-fg: #8e4d19; }
+.toxicity-high { --status-bg: #f7dddc; --status-fg: #941f27; }
 
 @media print {
   body { background: #fff; }

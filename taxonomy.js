@@ -20,6 +20,11 @@ export const conservationRanks = new Set(['species', 'subspecies']);
 
 export function conservationLabel(code) { return conservationNames.get(code) || null; }
 
+// Descriptive labels for species; unlike IUCN categories these are not a standardized scale.
+export const toxicityLevels = [['none', '无毒'], ['mild', '微毒'], ['toxic', '有毒'], ['high', '剧毒']];
+const toxicityNames = new Map(toxicityLevels);
+export function toxicityLabel(level) { return toxicityNames.get(level) || null; }
+
 export function rankLabel(rank) { return rankNames[rank] || rank; }
 
 export function safeHttps(value) {
