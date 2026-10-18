@@ -161,6 +161,7 @@ a:focus-visible, button:focus-visible, wa-button:focus-visible, .taxon-link:focu
   font-family: Georgia, 'Songti SC', serif;
 }
 .card-index { color: #8c856e; font-family: Georgia, serif; }
+.card-thumbnail { border-color: #c6bda9; border-radius: 0; background: #e8e5d8; }
 .card-body h3 { color: #2c4032; }
 .latin-name { color: #74786b; }
 .card-bottom { border-color: #d4cbb6; color: #626e5d; }

@@ -100,8 +100,11 @@ wa-button { display: inline-flex; align-items: center; cursor: pointer; }
 .card-top { min-height: 25px; }
 .card-rank, .detail-rank-badge { display: inline-flex; align-items: center; border: 1px solid #b6d7bd; border-radius: 999px; padding: 3px 9px; background: #eff8ed; color: #236243; font-size: 11px; font-weight: 700; line-height: 1.3; }
 .card-index { color: #a2b3a6; font-size: 12px; letter-spacing: .05em; }
-.card-body { padding-top: 20px; }
+.card-body { display: flex; align-items: flex-start; gap: 12px; padding-top: 20px; }
+.card-name { min-width: 0; flex: 1; }
+.card-thumbnail { display: block; width: 80px; height: 80px; flex: 0 0 80px; object-fit: cover; border: 1px solid #d3dfd1; border-radius: 8px; background: #edf2e8; }
 .card-body h3 { font-size: 22px; color: #1a3f31; }
+.card-name .latin-name { overflow-wrap: anywhere; }
 .latin-name { color: #6f8978; font-size: 13px; }
 .card-bottom { margin-top: 18px; color: #547460; }
 .card-arrow { font-size: 19px; }
@@ -161,6 +164,7 @@ wa-button { display: inline-flex; align-items: center; cursor: pointer; }
   .catalog-content { padding: 24px 18px 35px; border-radius: 16px; }
   .taxon-card-inner { min-height: 168px; padding: 15px; }
   .taxon-card { min-height: 168px; }
+  .card-thumbnail { width: 68px; height: 68px; flex-basis: 68px; }
   .parent-picker { padding: 15px; }
   .footer { margin-inline: 18px; }
 }
