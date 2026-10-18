@@ -99,7 +99,7 @@ a { color: inherit; }
 .content-topline { display: flex; justify-content: space-between; align-items: center; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
 .content-status { color: #829187; font-size: 11px; }
 .detail:empty { display: none; }
-.taxon-detail { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(210px, .6fr); gap: 24px; margin: 30px 0 52px; background: #e8eee5; border: 1px solid #dbe5d9; border-radius: 6px; overflow: clip; }
+.taxon-detail { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 24px; margin: 30px 0 52px; background: #e8eee5; border: 1px solid #dbe5d9; border-radius: 6px; overflow: clip; }
 .detail-copy { padding: 28px 0 30px 30px; }
 .detail-rank { margin-bottom: 13px; color: #729077; font-size: 10px; letter-spacing: .15em; text-transform: uppercase; }
 .detail-title { margin: 0 0 3px; font-family: 'Songti SC', 'STSong', serif; font-size: clamp(28px, 3vw, 40px); font-weight: 600; }
