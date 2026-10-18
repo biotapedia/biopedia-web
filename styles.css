@@ -99,7 +99,7 @@ a { color: inherit; }
 .content-topline { display: flex; justify-content: space-between; align-items: center; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
 .content-status { color: #829187; font-size: 11px; }
 .detail:empty { display: none; }
-.taxon-detail { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(210px, .6fr); gap: 24px; margin: 30px 0 52px; background: #e8eee5; border: 1px solid #dbe5d9; border-radius: 6px; overflow: hidden; }
+.taxon-detail { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(210px, .6fr); gap: 24px; margin: 30px 0 52px; background: #e8eee5; border: 1px solid #dbe5d9; border-radius: 6px; overflow: clip; }
 .detail-copy { padding: 28px 0 30px 30px; }
 .detail-rank { margin-bottom: 13px; color: #729077; font-size: 10px; letter-spacing: .15em; text-transform: uppercase; }
 .detail-title { margin: 0 0 3px; font-family: 'Songti SC', 'STSong', serif; font-size: clamp(28px, 3vw, 40px); font-weight: 600; }
@@ -117,7 +117,7 @@ a { color: inherit; }
 .prose pre code { padding: 0; }
 .prose hr { border: 0; border-top: 1px solid #d8e6d9; }
 .source-link { display: inline-block; margin-top: 19px; font-size: 12px; font-weight: 700; }
-.detail-visual { position: relative; min-height: 260px; display: grid; place-items: center; overflow: hidden; background: radial-gradient(circle at 45% 42%, #a6c8a8, #547967 80%); }
+.detail-visual { position: sticky; top: 20px; align-self: start; aspect-ratio: 4 / 5; max-height: calc(100vh - 40px); display: grid; place-items: center; overflow: hidden; background: radial-gradient(circle at 45% 42%, #a6c8a8, #547967 80%); }
 .detail-visual::before { content: ''; position: absolute; inset: 20px; border: 1px solid rgba(255,255,255,.3); border-radius: 50%; }
 .detail-visual img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 2; }
 .detail-visual:has(img)::before, .detail-visual:has(img) .visual-glyph { display: none; }
@@ -177,7 +177,7 @@ a { color: inherit; }
 @media (max-width: 860px) {
   .hero { grid-template-columns: 1fr 230px; }.hero-art { width: 230px; }
   .catalog-layout { grid-template-columns: 215px minmax(0, 1fr); }.sidebar { padding-left: 24px; }
-  .taxon-detail { grid-template-columns: 1fr; }.detail-copy { padding: 25px; }.detail-visual { min-height: 190px; }
+  .taxon-detail { grid-template-columns: 1fr; }.detail-copy { padding: 25px; }.detail-visual { position: relative; top: 0; aspect-ratio: 4 / 3; max-height: none; }
 }
 @media (max-width: 670px) {
   .topbar { height: 68px; }.brand { font-size: 20px; }.brand small, .topbar nav a { display: none; }
