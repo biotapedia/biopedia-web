@@ -92,18 +92,11 @@ a:focus-visible, button:focus-visible, wa-button:focus-visible, .taxon-link:focu
 .orbit-two { border-color: rgba(90, 99, 69, .24); }
 .orbit-three { border-color: rgba(90, 99, 69, .42); }
 .hero-art::before, .hero-art::after { background: rgba(111, 107, 79, .3); }
-.leaf {
-  border-color: rgba(67, 92, 64, .75);
-  background: linear-gradient(145deg, rgba(139, 154, 112, .16), rgba(139, 154, 112, .02));
-}
-.leaf::after { background: rgba(67, 92, 64, .52); }
-.art-center {
-  border: 1px solid #839078;
-  background: #f3ebd8;
-  color: #3d583f;
-  box-shadow: 0 0 0 8px #eee6d2, 0 0 0 9px #b3a990;
-}
 .art-label { color: #7c765d; }
+.hero-art { isolation: isolate; }
+.hero-illustration { position: absolute; z-index: 1; display: block; height: auto; object-fit: contain; pointer-events: none; filter: drop-shadow(2px 5px 3px rgba(65, 57, 38, .12)); }
+.hero-ginkgo { width: 84%; left: -9%; top: -5%; transform: rotate(-7deg); }
+.hero-bird { width: 59%; right: -9%; bottom: -9%; transform: rotate(4deg); }
 
 /* Curated species on the home page, presented like a plate from a field guide. */
 .featured {
@@ -115,7 +108,9 @@ a:focus-visible, button:focus-visible, wa-button:focus-visible, .taxon-link:focu
 }
 .featured-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 19px; }
 .featured-heading h2 { margin: 6px 0 0; color: #293c30; font: 600 clamp(23px, 2.6vw, 32px) Georgia, 'Songti SC', 'STSong', serif; }
-.featured-heading > p { margin: 0 0 3px; color: #807b6a; font-size: 12px; }
+.featured-aside { display: flex; align-items: center; gap: 16px; }
+.featured-aside p { margin: 0; color: #807b6a; font-size: 12px; }
+.featured-aside img { display: block; width: clamp(70px, 8vw, 104px); height: auto; margin-block: -18px -8px; object-fit: contain; }
 .featured-stage { min-height: 320px; }
 .featured-slide { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(290px, .9fr); min-height: 320px; border: 1px solid #bdb39b; background: #f1ecde; }
 .featured-image { position: relative; min-width: 0; min-height: 320px; overflow: hidden; display: grid; place-items: center; background: radial-gradient(circle, #b3c1a8, #637b63); }
@@ -161,6 +156,7 @@ a:focus-visible, button:focus-visible, wa-button:focus-visible, .taxon-link:focu
   box-shadow: var(--shadow-soft);
 }
 .sidebar { border-top: 3px double #a79c80; }
+.sidebar-illustration { display: block; width: min(75%, 148px); height: auto; margin: 22px auto -28px; transform: rotate(-6deg); pointer-events: none; }
 .sidebar-heading h2, .directory-heading h2, .detail-title, .card-body h3,
 .contribute-intro h1, .contribute-form-head h2 {
   color: #293c30;
@@ -214,6 +210,8 @@ a:focus-visible, button:focus-visible, wa-button:focus-visible, .taxon-link:focu
 .latin-name { color: #74786b; }
 .card-bottom { border-color: #d4cbb6; color: #626e5d; }
 .card-arrow { color: #516e50; }
+.directory-title { display: flex; align-items: end; min-width: 0; gap: 15px; }
+.directory-illustration { display: block; width: 86px; height: 86px; flex: none; object-fit: contain; margin: -12px 0 -12px; pointer-events: none; }
 .load-more::part(button) {
   border-color: #8c987e;
   border-radius: 1px;
@@ -233,7 +231,8 @@ a:focus-visible, button:focus-visible, wa-button:focus-visible, .taxon-link:focu
 .detail-visual { background: radial-gradient(circle at 45% 35%, #b5bfa1, #768d75 80%); }
 .detail-visual::before { border-color: rgba(255, 253, 236, .5); }
 .visual-label { color: #fffdf0; }
-.footer { border-top: 1px solid #c9bea6; color: #777468; }
+.footer { align-items: center; border-top: 1px solid #c9bea6; color: #777468; }
+.footer-illustration { display: block; width: 86px; height: 86px; object-fit: contain; margin-block: -10px; pointer-events: none; }
 
 /* Distribution map: an atlas plate under the taxon article. */
 .distribution { margin: -18px 0 42px; padding: 22px 24px 20px; border: 1px solid #bfc3a9; background: #f7f4e8; }
@@ -278,6 +277,7 @@ a:focus-visible, button:focus-visible, wa-button:focus-visible, .taxon-link:focu
 @media (max-width: 860px) {
   .distribution-body { grid-template-columns: 1fr; }
   .distribution-list { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .directory-illustration { display: none; }
 }
 
 @media (max-width: 670px) {
@@ -285,6 +285,11 @@ a:focus-visible, button:focus-visible, wa-button:focus-visible, .taxon-link:focu
   .hero-copy { padding-left: 0; }
   .hero::before { inset: 7px; }
   .content-status { max-width: 48%; text-align: right; }
+  .featured-aside img { width: 68px; margin-block: -10px -14px; }
+  .sidebar-illustration { display: none; }
+  .footer { flex-direction: row; flex-wrap: wrap; justify-content: space-between; gap: 8px 14px; }
+  .footer-illustration { order: 2; width: 64px; height: 64px; margin-left: auto; }
+  .footer span:last-child { order: 3; width: 100%; }
 }
 
 /* Conservation and toxicity labels include text so meaning never relies on hue alone. */

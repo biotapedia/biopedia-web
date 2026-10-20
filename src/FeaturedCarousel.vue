@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { fetchData, fetchTaxon } from '../catalog-api.js';
 import { conservationLabel, rankLabel, safeHttps, toxicityLabel } from '../taxonomy.js';
+import mushroomsIllustration from './assets/illustrations/mushrooms.webp';
 
 const featured = ref([]);
 const current = ref(0);
@@ -67,7 +68,7 @@ onUnmounted(() => {
   <section v-if="active" class="featured" aria-labelledby="featured-title" @mouseenter="paused = true" @mouseleave="paused = false" @focusin="paused = true" @focusout="focusOut">
     <div class="featured-heading">
       <div><p class="section-kicker">RANDOM DISCOVERY / 随机推荐</p><h2 id="featured-title">遇见这些物种</h2></div>
-      <p>每次进入首页，遇见不同的物种</p>
+      <div class="featured-aside"><p>每次进入首页，遇见不同的物种</p><img :src="mushroomsIllustration" alt="" aria-hidden="true" loading="lazy" decoding="async"></div>
     </div>
     <div class="featured-stage">
       <Transition name="featured-fade" mode="out-in">

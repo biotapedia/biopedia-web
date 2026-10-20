@@ -6,6 +6,11 @@ import { conservationLabel, rankLabel, safeHttps, toxicityLabel } from '../taxon
 // The cover is shown whole; this lets its own blurred copy fill the space around it.
 import { renderMarkdown } from '../markdown.js';
 import { regionIndex, regionPath } from './regions.js';
+import ginkgoIllustration from './assets/illustrations/ginkgo.webp';
+import blueTitIllustration from './assets/illustrations/blue-tit.webp';
+import acornsIllustration from './assets/illustrations/acorns.webp';
+import squirrelIllustration from './assets/illustrations/squirrel.webp';
+import dandelionIllustration from './assets/illustrations/dandelion.webp';
 
 const DistributionMap = defineAsyncComponent(() => import('./DistributionMap.vue'));
 const FeaturedCarousel = defineAsyncComponent(() => import('./FeaturedCarousel.vue'));
@@ -112,7 +117,7 @@ onUnmounted(() => { window.removeEventListener('hashchange', route); });
       <p class="hero-description">从界到种，逐层探索；每一个条目，都可以由好奇的你补全。</p>
       <div class="hero-actions"><a class="primary-link" href="#catalog">开始探索 <span aria-hidden="true">↘</span></a><span class="hero-note">开放资料 · 逐级浏览 · 社区共建</span></div>
     </div>
-    <div class="hero-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit orbit-three"></div><div class="leaf leaf-one"></div><div class="leaf leaf-two"></div><div class="leaf leaf-three"></div><div class="art-center">B<span>·</span></div><span class="art-label art-label-top">NATURE / INDEX</span><span class="art-label art-label-bottom">01 — ∞</span></div>
+    <div class="hero-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit orbit-three"></div><img class="hero-illustration hero-ginkgo" :src="ginkgoIllustration" alt="" decoding="async"><img class="hero-illustration hero-bird" :src="blueTitIllustration" alt="" decoding="async"><span class="art-label art-label-top">NATURE / INDEX</span><span class="art-label art-label-bottom">01 — ∞</span></div>
   </section>
 
   <FeaturedCarousel v-if="isHome" />
@@ -124,6 +129,7 @@ onUnmounted(() => { window.removeEventListener('hashchange', route); });
         <a href="#/" :class="['path-item', { active: !path.length }]"><span class="path-bullet">◎</span><span>全部分类</span></a>
         <a v-for="(ancestor, index) in path" :key="ancestor.id" :href="`#/taxon/${ancestor.id}`" :class="['path-item', { active: index === path.length - 1 }]" :style="{ '--path-depth': index + 1 }"><span class="path-bullet">↳</span><span>{{ displayName(ancestor) }}</span></a>
       </nav>
+      <img v-if="isHome" class="sidebar-illustration" :src="squirrelIllustration" alt="" aria-hidden="true" loading="lazy" decoding="async">
       <wa-card class="sidebar-tip" appearance="plain"><span class="tip-symbol" aria-hidden="true">↗</span><p>发现资料缺失？<br>从当前分类直接发起投稿。</p><a class="sidebar-contribute" :href="contributionHref">参与共建 <span aria-hidden="true">→</span></a></wa-card>
     </aside>
 
@@ -147,7 +153,7 @@ onUnmounted(() => { window.removeEventListener('hashchange', route); });
           </div>
         </section>
       </div>
-      <div class="directory-heading"><div><p class="section-kicker">{{ taxon ? 'CONTINUE / 继续探索' : 'DISCOVER / 从这里开始' }}</p><h2>{{ error ? '连接失败' : taxon ? (total ? `${displayName(taxon)}的下级分类` : '目录尽头') : '探索生命的主要类群' }}</h2></div><label class="filter-field"><span class="sr-only">筛选当前目录</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3"></circle><path d="m16 16 4.3 4.3"></path></svg><input v-model="filter" type="search" placeholder="筛选当前目录…" autocomplete="off"></label></div>
+      <div class="directory-heading"><div class="directory-title"><div><p class="section-kicker">{{ taxon ? 'CONTINUE / 继续探索' : 'DISCOVER / 从这里开始' }}</p><h2>{{ error ? '连接失败' : taxon ? (total ? `${displayName(taxon)}的下级分类` : '目录尽头') : '探索生命的主要类群' }}</h2></div><img v-if="isHome" class="directory-illustration" :src="acornsIllustration" alt="" aria-hidden="true" loading="lazy" decoding="async"></div><label class="filter-field"><span class="sr-only">筛选当前目录</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3"></circle><path d="m16 16 4.3 4.3"></path></svg><input v-model="filter" type="search" placeholder="筛选当前目录…" autocomplete="off"></label></div>
       <div class="card-grid">
         <a v-for="(item, index) in visibleItems" :key="item.id" class="taxon-link" :href="`#/taxon/${item.id}`" :aria-label="`${rankLabel(item.rank)}：${displayName(item)}，${item.scientific_name}${conservationLabel(item.conservation_status) ? `，${conservationLabel(item.conservation_status)}` : ''}${item.child_count ? `，${item.child_count} 个下级分类` : ''}`">
           <wa-card class="taxon-card" appearance="plain"><div class="taxon-card-inner"><div class="card-top"><span class="card-tags"><span class="card-rank">{{ rankLabel(item.rank) }}</span><span v-if="conservationLabel(item.conservation_status)" :class="['status-badge', `status-${item.conservation_status}`]" :title="`IUCN 红色名录：${conservationLabel(item.conservation_status)}`">{{ conservationLabel(item.conservation_status) }} · {{ item.conservation_status }}</span><span v-if="toxicityLabel(item.toxicity)" :class="['toxicity-badge', `toxicity-${item.toxicity}`]" title="概略毒性；具体风险取决于接触方式和剂量">毒性 · {{ toxicityLabel(item.toxicity) }}</span></span><span class="card-index">{{ String(items.indexOf(item) + 1).padStart(2, '0') }}</span></div><div class="card-body"><div class="card-name"><h3>{{ displayName(item) }}</h3><p class="latin-name">{{ item.name_zh ? item.scientific_name : '中文名待查' }}</p></div><img v-if="safeHttps(item.image_url) && !failedThumbnails[item.id]" class="card-thumbnail" :src="safeHttps(item.image_url)" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" @error="failedThumbnails[item.id] = true"></div><div class="card-bottom"><span>{{ item.child_count ? `${item.child_count} 个下级分类` : '查看详情' }}</span><span class="card-arrow">↗</span></div></div></wa-card>
@@ -157,5 +163,5 @@ onUnmounted(() => { window.removeEventListener('hashchange', route); });
       <p v-if="emptyMessage && status !== '正在读取目录…' && status !== '正在读取分类…'" class="empty-state">{{ emptyMessage }}</p>
     </section>
   </main>
-  <footer class="footer"><span>BIOTAPEDIA / 万物图鉴</span><span>内容由社区共同维护 · 文字存于 GitHub 仓库</span></footer>
+  <footer class="footer"><span>BIOTAPEDIA / 万物图鉴</span><img class="footer-illustration" :src="dandelionIllustration" alt="" aria-hidden="true" loading="lazy" decoding="async"><span>内容由社区共同维护 · 文字存于 GitHub 仓库</span></footer>
 </template>

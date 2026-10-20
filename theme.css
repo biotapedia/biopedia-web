@@ -64,7 +64,6 @@ wa-button { display: inline-flex; align-items: center; cursor: pointer; }
 .primary-link { border-radius: 999px; padding: 14px 22px; background: #d9edbd; box-shadow: 0 8px 22px rgba(0, 0, 0, .12); }
 .primary-link:hover { background: #f0f8d7; }
 .hero-art { width: min(100%, 300px); opacity: .92; }
-.art-center { background: #d2ebbb; box-shadow: 0 0 0 10px rgba(15, 51, 39, .72); }
 
 /* Catalog layout */
 .catalog-layout {
