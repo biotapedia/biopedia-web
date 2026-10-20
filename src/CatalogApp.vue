@@ -8,8 +8,10 @@ import { renderMarkdown } from '../markdown.js';
 import { regionIndex, regionPath } from './regions.js';
 
 const DistributionMap = defineAsyncComponent(() => import('./DistributionMap.vue'));
+const FeaturedCarousel = defineAsyncComponent(() => import('./FeaturedCarousel.vue'));
 
 const taxon = ref(null);
+const isHome = ref(true);
 const path = ref([]);
 const items = ref([]);
 const nextPage = ref(null);
@@ -41,6 +43,7 @@ const vMarkdown = {
 async function route() {
   const sequence = ++renderSequence;
   const match = location.hash.match(/^#\/taxon\/([a-z0-9-]+)$/);
+  isHome.value = !match;
   taxon.value = null;
   path.value = [];
   items.value = [];
@@ -111,6 +114,8 @@ onUnmounted(() => { window.removeEventListener('hashchange', route); });
     </div>
     <div class="hero-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit orbit-three"></div><div class="leaf leaf-one"></div><div class="leaf leaf-two"></div><div class="leaf leaf-three"></div><div class="art-center">B<span>·</span></div><span class="art-label art-label-top">NATURE / INDEX</span><span class="art-label art-label-bottom">01 — ∞</span></div>
   </section>
+
+  <FeaturedCarousel v-if="isHome" />
 
   <main id="catalog" class="catalog-layout">
     <aside class="sidebar" aria-label="分类路径">
