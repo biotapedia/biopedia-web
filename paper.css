@@ -101,42 +101,24 @@ a:focus-visible, button:focus-visible, wa-button:focus-visible, .taxon-link:focu
 }
 .featured-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 19px; }
 .featured-heading h2 { margin: 6px 0 0; color: #293c30; font: 600 clamp(23px, 2.6vw, 32px) Georgia, 'Songti SC', 'STSong', serif; }
-.featured-heading > p { margin: 0 0 3px; color: #807b6a; font-size: 12px; }
-.featured-stage { min-height: 320px; }
-.featured-slide { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(290px, .9fr); min-height: 320px; border: 1px solid #bdb39b; background: #f1ecde; }
-.featured-image { position: relative; min-width: 0; min-height: 320px; overflow: hidden; display: grid; place-items: center; background: radial-gradient(circle, #b3c1a8, #637b63); }
-.featured-image img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.featured-image-fallback { color: #e8ead8; font: 110px Georgia, serif; }
-.featured-image:has(img) .featured-image-fallback { display: none; }
-.featured-image-index { position: absolute; bottom: 15px; left: 17px; padding: 5px 9px; background: rgba(37, 51, 38, .83); color: #f9f6e9; font: 12px Georgia, serif; letter-spacing: .08em; }
-.featured-copy { display: flex; flex-direction: column; align-items: flex-start; padding: clamp(24px, 3vw, 42px); min-width: 0; }
-.featured-overline { margin: 0 0 16px; color: #777358; font: 700 11px Georgia, 'Songti SC', serif; letter-spacing: .16em; }
-.featured-copy h3 { margin: 0; color: #283d30; font: 600 clamp(31px, 3.5vw, 46px) Georgia, 'Songti SC', 'STSong', serif; }
-.featured-scientific { margin: 8px 0 0; color: #667362; font: italic 17px Georgia, serif; overflow-wrap: anywhere; }
-.featured-badges { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 26px; }
-.featured-open { display: inline-flex; align-items: center; justify-content: space-between; gap: 30px; min-width: 180px; margin-top: auto; padding: 11px 14px; border: 1px solid #455b43; background: #425c45; color: #fffaf0; font-size: 13px; font-weight: 700; text-decoration: none; }
-.featured-open:hover { background: #2e4836; }
-.featured-credit { margin: 18px 0 0; max-width: 100%; color: #77786b; font-size: 10px; line-height: 1.5; overflow-wrap: anywhere; }
-.featured-controls { display: flex; align-items: center; justify-content: center; gap: 17px; margin-top: 17px; }
+.featured-rail { display: flex; gap: 12px; height: 290px; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x proximity; scrollbar-width: thin; scrollbar-color: #a8a089 #f1ecde; }
+.featured-card { position: relative; display: block; flex: none; width: max-content; max-width: min(72vw, 480px); height: 100%; overflow: hidden; border: 1px solid #bdb39b; background: #e6e5d9; color: #fffaf0; scroll-snap-align: start; }
+.featured-card img { display: block; width: auto; max-width: 100%; height: 100%; object-fit: contain; }
+.featured-image-fallback { display: grid; place-items: center; width: 240px; height: 100%; color: #e8ead8; background: radial-gradient(circle, #b3c1a8, #637b63); font: 110px Georgia, serif; }
+.featured-caption { position: absolute; inset: auto 0 0; display: flex; flex-direction: column; gap: 3px; padding: 32px 15px 13px; background: linear-gradient(transparent, rgba(24, 38, 28, .86)); opacity: 0; transform: translateY(8px); transition: opacity .2s ease, transform .2s ease; }
+.featured-card:hover .featured-caption, .featured-card:focus-visible .featured-caption { opacity: 1; transform: translateY(0); }
+.featured-caption strong { font: 600 18px Georgia, 'Songti SC', 'STSong', serif; }
+.featured-caption em { font: italic 14px Georgia, serif; overflow-wrap: anywhere; }
+.featured-caption small { margin-top: 4px; color: #e6e2d4; font-size: 10px; line-height: 1.3; overflow-wrap: anywhere; }
+.featured-controls { display: flex; align-items: center; gap: 8px; }
 .featured-arrow { width: 34px; height: 32px; border: 1px solid #a8a089; background: #f4efdf; color: #354c39; font-size: 18px; line-height: 1; }
 .featured-arrow:hover { background: #e9e2cf; }
-.featured-dots { display: flex; align-items: center; gap: 8px; }
-.featured-dot { width: 10px; height: 10px; padding: 0; border: 1px solid #8d987d; border-radius: 50%; background: transparent; }
-.featured-dot.active { background: #4c684d; border-color: #4c684d; }
-.featured-fade-enter-active, .featured-fade-leave-active { transition: opacity .24s ease; }
-.featured-fade-enter-from, .featured-fade-leave-to { opacity: 0; }
-@media (max-width: 760px) {
-  .featured-slide { grid-template-columns: 1fr; }
-  .featured-image { min-height: 260px; }
-  .featured-copy { min-height: 260px; }
-}
 @media (max-width: 670px) {
-  .featured-heading { align-items: start; flex-direction: column; gap: 8px; }
-  .featured-image { min-height: 220px; }
-  .featured-copy { min-height: 250px; padding: 23px; }
+  .featured-rail { height: 220px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .featured-fade-enter-active, .featured-fade-leave-active { transition: none; }
+  .featured-rail { scroll-behavior: auto; }
+  .featured-caption { transition: none; }
 }
 
 /* Loose catalog sheets, ruled sections, and square specimen cards. */
