@@ -52,7 +52,7 @@ function selectRegions(kind, items) {
   const leaves = items.map(item => item.dataset.region).filter(id => regionIndex.get(id)?.children.length === 0);
   form.distribution = normalizeRegions([...kept, ...leaves]);
 }
-function pickerLabel(node) { return `${node.name_zh} · ${rankLabel(node.rank)}${node.pending ? '（本次新增）' : ''}`; }
+function pickerLabel(node) { return `${node.name_zh || node.scientific_name} · ${rankLabel(node.rank)}${node.pending ? '（本次新增）' : ''}`; }
 function levelWidth(node) { return `${Math.min(250, Math.max(104, [...pickerLabel(node)].length * 13 + 38))}px`; }
 
 async function loadPickerPage(page = 1) {
@@ -310,7 +310,7 @@ onMounted(async () => {
               >
                 <wa-option :value="node.id ?? '__current__'" :label="pickerLabel(node)">{{ pickerLabel(node) }}</wa-option>
                 <template v-if="editingIndex === index">
-                  <wa-option v-for="item in editChoices.filter(item => item.id !== node.id)" :key="item.id" :value="item.id" :label="pickerLabel(item)">{{ item.name_zh }} · {{ rankLabel(item.rank) }} · {{ item.scientific_name }}</wa-option>
+                  <wa-option v-for="item in editChoices.filter(item => item.id !== node.id)" :key="item.id" :value="item.id" :label="pickerLabel(item)">{{ item.name_zh || item.scientific_name }} · {{ rankLabel(item.rank) }} · {{ item.scientific_name }}</wa-option>
                   <wa-option v-if="editLoading" value="__loading__" disabled>正在读取同级分类…</wa-option>
                   <wa-option v-if="editStatus" value="__error__" disabled>{{ editStatus }}</wa-option>
                   <wa-option v-if="editPage !== null" value="__more__">加载更多分类…</wa-option>
@@ -330,7 +330,7 @@ onMounted(async () => {
               @change="selectChoice($event.target.value)"
             >
               <wa-option v-if="pickerLoading && !choices.length" value="" disabled>正在加载下级分类…</wa-option>
-              <wa-option v-for="item in choices" :key="item.id" :value="item.id">{{ item.name_zh }} · {{ rankLabel(item.rank) }} · {{ item.scientific_name }}</wa-option>
+              <wa-option v-for="item in choices" :key="item.id" :value="item.id">{{ item.name_zh || item.scientific_name }} · {{ rankLabel(item.rank) }} · {{ item.scientific_name }}</wa-option>
               <wa-option value="__new__">新增分类…</wa-option>
             </wa-select>
             <wa-button v-if="parentPage !== null" appearance="outlined" variant="brand" size="s" type="button" :disabled="pickerLoading" @click="loadPickerPage(parentPage)">加载更多</wa-button>

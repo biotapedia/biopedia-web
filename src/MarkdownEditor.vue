@@ -1,5 +1,5 @@
 <script setup>
-import { nextTick, onBeforeUnmount, ref, watch } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { EditorContent, useEditor } from '@tiptap/vue-3';
 import { Bold, Code, FileCode, Heading2, Heading3, ImagePlus, Italic, Link, List, ListOrdered, Redo2, TextQuote, Undo2 } from '@lucide/vue';
 import { safeHttps } from '../taxonomy.js';
@@ -9,6 +9,11 @@ const model = defineModel({ type: String, default: '' });
 const sourceMode = ref(false);
 const source = ref(null);
 const panel = ref('');
+const field = ref(null);
+const linkButton = ref(null);
+const imageButton = ref(null);
+const panelElement = ref(null);
+const panelStyle = ref({});
 const insertion = ref({ from: 0, to: 0 });
 const editingLink = ref(false);
 const label = ref('');
@@ -41,7 +46,17 @@ const editor = useEditor({
     model.value = lastMarkdown;
   }
 });
-onBeforeUnmount(() => editor.value?.destroy());
+onMounted(() => {
+  document.addEventListener('pointerdown', dismissPanel);
+  document.addEventListener('keydown', dismissPanelOnEscape);
+  window.addEventListener('resize', positionPanel);
+});
+onBeforeUnmount(() => {
+  document.removeEventListener('pointerdown', dismissPanel);
+  document.removeEventListener('keydown', dismissPanelOnEscape);
+  window.removeEventListener('resize', positionPanel);
+  editor.value?.destroy();
+});
 
 watch(model, value => {
   if (sourceMode.value || !editor.value || value === lastMarkdown) return;
@@ -86,7 +101,31 @@ function toggleSource() {
   }
 }
 
+function positionPanel() {
+  const trigger = (panel.value === 'image' ? imageButton : linkButton).value;
+  if (!trigger || !field.value) return;
+  const fieldRect = field.value.getBoundingClientRect();
+  const buttonRect = trigger.getBoundingClientRect();
+  const width = Math.min(380, fieldRect.width, window.innerWidth - 24);
+  const left = Math.max(0, Math.min(buttonRect.left - fieldRect.left, fieldRect.width - width));
+  panelStyle.value = {
+    top: `${buttonRect.bottom - fieldRect.top + 8}px`,
+    left: `${left}px`,
+    width: `${width}px`
+  };
+}
+function dismissPanel(event) {
+  if (!panel.value || panelElement.value?.contains(event.target) ||
+    linkButton.value?.contains(event.target) || imageButton.value?.contains(event.target)) return;
+  panel.value = '';
+}
+function dismissPanelOnEscape(event) {
+  if (event.key !== 'Escape' || !panel.value) return;
+  event.preventDefault();
+  closePanel();
+}
 function openPanel(kind) {
+  if (panel.value === kind) { closePanel(); return; }
   const current = editor.value;
   editingLink.value = kind === 'link' && current.isActive('link');
   if (editingLink.value) current.chain().extendMarkRange('link').run();
@@ -97,6 +136,7 @@ function openPanel(kind) {
   credit.value = '';
   message.value = '';
   panel.value = kind;
+  nextTick(positionPanel);
 }
 function closePanel() {
   panel.value = '';
@@ -127,7 +167,7 @@ function insertImage() {
 </script>
 
 <template>
-  <div class="form-field form-wide markdown-field">
+  <div ref="field" class="form-field form-wide markdown-field">
     <label id="description-label" :for="sourceMode ? 'description-source' : undefined" @click="!sourceMode && editor?.commands.focus()">介绍与特征 *</label>
     <div class="markdown-editor">
       <div class="markdown-toolbar" role="toolbar" aria-label="介绍与特征格式工具">
@@ -140,14 +180,14 @@ function insertImage() {
           ><component :is="tool.icon" :size="17" :stroke-width="2.2" /></button>
           <span class="toolbar-divider" aria-hidden="true"></span>
         </template>
-        <button type="button" :title="hint('插入链接', 'Mod-K')" aria-label="插入链接" :aria-pressed="Boolean(editor && !sourceMode && editor.isActive('link'))" :aria-expanded="panel === 'link'" aria-controls="markdown-link-panel" :disabled="!editor || sourceMode" @mousedown.prevent @click="openPanel('link')"><Link :size="17" :stroke-width="2.2" /></button>
-        <button type="button" title="插入图片" aria-label="插入图片" :aria-expanded="panel === 'image'" aria-controls="markdown-image-panel" :disabled="!editor || sourceMode" @mousedown.prevent @click="openPanel('image')"><ImagePlus :size="17" :stroke-width="2.2" /></button>
+        <button ref="linkButton" type="button" :title="hint('插入链接', 'Mod-K')" aria-label="插入链接" :aria-pressed="Boolean(editor && !sourceMode && editor.isActive('link'))" :aria-expanded="panel === 'link'" aria-controls="markdown-link-panel" :disabled="!editor || sourceMode" @mousedown.prevent @click="openPanel('link')"><Link :size="17" :stroke-width="2.2" /></button>
+        <button ref="imageButton" type="button" title="插入图片" aria-label="插入图片" :aria-expanded="panel === 'image'" aria-controls="markdown-image-panel" :disabled="!editor || sourceMode" @mousedown.prevent @click="openPanel('image')"><ImagePlus :size="17" :stroke-width="2.2" /></button>
         <button type="button" class="toolbar-source" title="编辑 Markdown 源码" aria-label="Markdown 源码" :aria-pressed="sourceMode" :disabled="!editor" @click="toggleSource"><FileCode :size="17" :stroke-width="2.2" /><span>源码</span></button>
       </div>
       <textarea v-if="sourceMode" id="description-source" ref="source" v-model="model" class="markdown-source" maxlength="10000" rows="9" spellcheck="false"></textarea>
       <EditorContent v-show="!sourceMode" :editor="editor" />
     </div>
-    <div v-if="panel === 'link'" id="markdown-link-panel" class="editor-insert-panel">
+    <div v-if="panel === 'link'" id="markdown-link-panel" ref="panelElement" class="editor-insert-panel" :style="panelStyle">
       <strong>{{ editingLink ? '编辑链接' : '插入链接' }}</strong>
       <wa-input label="显示文字" :value.prop="label" placeholder="例如：资料来源" @input="label = $event.target.value"></wa-input>
       <wa-input label="HTTPS 链接" :value.prop="url" type="url" placeholder="https://example.org/source" @input="url = $event.target.value"></wa-input>
@@ -158,7 +198,7 @@ function insertImage() {
         <wa-button appearance="filled" variant="brand" size="s" type="button" @click="insertLink">{{ editingLink ? '保存链接' : '插入链接' }}</wa-button>
       </div>
     </div>
-    <div v-if="panel === 'image'" id="markdown-image-panel" class="editor-insert-panel">
+    <div v-if="panel === 'image'" id="markdown-image-panel" ref="panelElement" class="editor-insert-panel" :style="panelStyle">
       <strong>插入正文图片</strong>
       <wa-input label="图片说明" :value.prop="label" placeholder="例如：毒鹅膏的菌盖" @input="label = $event.target.value"></wa-input>
       <wa-input label="图片外链（HTTPS）" :value.prop="url" type="url" placeholder="https://example.org/photo.jpg" @input="url = $event.target.value"></wa-input>
