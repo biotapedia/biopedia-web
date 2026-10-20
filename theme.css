@@ -40,7 +40,6 @@ wa-button { display: inline-flex; align-items: center; cursor: pointer; }
   backdrop-filter: blur(14px);
 }
 .brand { font-size: 19px; letter-spacing: .1em; }
-.brand-mark { width: 42px; height: 42px; border-color: #c7dec8; background: #e6f3e4; color: #236447; }
 .brand small { color: #6e8576; opacity: 1; }
 .topbar nav a { color: #42634f; }
 .topbar nav a:hover { color: #174b35; }
@@ -153,7 +152,6 @@ wa-button { display: inline-flex; align-items: center; cursor: pointer; }
 @media (max-width: 670px) {
   .topbar { height: 68px; }
   .brand { font-size: 14px; }
-  .brand-mark { width: 34px; height: 34px; font-size: 23px; }
   .header-contribute { min-height: 36px; padding-inline: 10px; }
   .hero { margin: 12px 12px 0; border-radius: 19px; min-height: 330px; padding: 43px 26px; }
   .hero h1 { font-size: clamp(37px, 9vw, 53px); }

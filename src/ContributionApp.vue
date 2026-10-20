@@ -5,6 +5,7 @@ import { fetchData, fetchTaxon, ancestorPath } from '../catalog-api.js';
 import { markdownImageUrls } from '../markdown.js';
 import { conservationLabel, conservationRanks, conservationStatuses, nextRank, rankLabel, rankNames, safeHttps, toxicityLabel, toxicityLevels } from '../taxonomy.js';
 import { normalizeRegions, regionIndex, regionLeaves, regionPath, regionTree, toggleRegionLeaf } from './regions.js';
+import logo from './assets/illustrations/biotapedia-logo.webp';
 
 const DistributionMap = defineAsyncComponent(() => import('./DistributionMap.vue'));
 
@@ -276,7 +277,7 @@ onMounted(async () => {
 
 <template>
   <header class="topbar">
-    <a class="brand" href="./#/" aria-label="返回万物图鉴首页"><span class="brand-mark" aria-hidden="true">✳</span><span>BIOTAPEDIA <small>万物图鉴</small></span></a>
+    <a class="brand" href="./#/" aria-label="返回万物图鉴首页"><span class="brand-mark" aria-hidden="true"><img :src="logo" alt=""></span><span>BIOTAPEDIA <small>万物图鉴</small></span></a>
     <nav aria-label="主导航"><a class="back-to-catalog" :href="backHref">← 返回图鉴</a></nav>
   </header>
 
